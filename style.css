@@ -1,0 +1,132 @@
+*{
+	margin:0 auto;
+	padding: 0;
+}
+::-webkit-scrollbar {
+    width: 4px;
+}
+::-webkit-scrollbar-button {
+    background-color: #aaa;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #eee;
+}
+::-webkit-scrollbar-track {
+    background-color: #aaa;
+}
+body{
+	width: 100%;
+	min-width: 1024px;
+	height: 100%;
+	color: #666;
+	background: #ccc;
+    font: 13px/2.2 "Century Gothic","Microsoft yahei";
+    transition: background .5s;
+}
+.popup{
+	height: 5px;
+	background: #eee;
+}
+.content{
+	width: 960px;
+	height: 100%;
+	height: 1000px;	
+}
+.bgmusic{
+	width: 100%;
+	height: 100px;
+	margin-top: 15px;
+	background: #555;
+}
+.portraitorsculpture { 
+	width: 100px;
+	height:100px;
+	line-height: 100px;
+	text-align:center; 
+	vertical-align: middle;
+	float: left;
+	background: #fff;
+}
+.portraitorsculpture img{
+	width: 80px;
+	height: 80px;
+	vertical-align:middle;
+	-webkit-transition: -webkit-transform 0.4s ease-out;
+	-moz-transition: -moz-transform 0.4s ease-out;
+	transition: transform 0.4s ease-out;
+}
+.portraitorsculpture a:hover img{
+	-webkit-transform: rotate(360deg);
+	-moz-transform: rotate(360deg);
+	transform: rotate(360deg);
+}
+
+.contentmusic{
+	width: 720px;
+	height: 80px;
+	padding: 10px;
+	margin-left: 10px;
+	float: left;
+	background: #fff;
+}
+.contentmusic h4{
+	font-size: 15px;
+	margin-top: 10px;
+	line-height: 15px;
+    font-weight: 400;
+    text-decoration: none;
+    color: #aaa;
+    float: left;
+}
+.musictime{
+	margin-top: 12px;
+	font-size: 14px;
+	line-height: 14px;
+	float: right;
+}
+.progressbar{
+	width: 720px;
+	height: 8px;
+	margin-top: 38px;
+	background: #ddd;
+	clear: both;
+}
+.progressbarpass{
+	    width: 99%;
+        height: 100%;
+        border-radius: 1px;
+        float: left; 
+        background: #aaa;
+        animation: loader 1s linear infinite;
+        -moz-animation: loader 1s linear infinite;
+        -webkit-animation: loader 1s linear infinite;
+        -o-animation: loader 1s linear infinite;    
+}
+.progressbar:hover .progressbarpass{
+        animation-play-state: paused;
+        -moz-animation-play-state: paused;
+        -o-animation-play-state: paused;
+        -webkit-animation-play-state: paused;
+}
+@keyframes loader { from { width: 0%; } to { width: 100%; } } 
+@-moz-keyframes loader { from { width: 0%; } to { width: 100%; } } 
+@-webkit-keyframes loader { from { width: 0%; } to { width: 100%; } } 
+@-o-keyframes loader { from { width: 0%; } to { width: 100%; } }
+.progressbartag{
+	width: 100px;
+	height: 28px;
+	line-height:28px; 
+	border-radius: 2px;
+	margin: 10px;
+	float: left;
+	text-align: center;
+	background: #ddd;
+}
+.musiccontrol{
+	width: 100px;
+	height: 100px;
+	margin-left: 10px;
+	float: left;
+	background: #fff;
+}
