@@ -37,9 +37,9 @@ body{
 	width: 100%;
 	height: 100px;
 	margin-top: 15px;
-	background: #555;
+	position: fixed;
 }
-.portraitorsculpture { 
+.portraitorsculpture{ 
 	width: 100px;
 	height:100px;
 	line-height: 100px;
@@ -114,19 +114,58 @@ body{
 @-webkit-keyframes loader { from { width: 0%; } to { width: 100%; } } 
 @-o-keyframes loader { from { width: 0%; } to { width: 100%; } }
 .progressbartag{
-	width: 100px;
+	width: 94px;
 	height: 28px;
 	line-height:28px; 
 	border-radius: 2px;
-	margin: 10px;
+	margin: 10px 10px 0 0;
 	float: left;
 	text-align: center;
 	background: #ddd;
+	
+}
+.progressbartag:hover{
+	background: #aaa;
+}
+.progressbartag:last-child{
+	margin-right: 0px;
 }
 .musiccontrol{
-	width: 100px;
-	height: 100px;
+	width: 80px;
+	height: 80px;
 	margin-left: 10px;
+	padding: 10px 10px;
 	float: left;
 	background: #fff;
+}
+.musiccontrol-inner{
+	width: 80px;
+	height: 73px;
+	padding-top: 7px;
+	background: #eee;
+}
+.stopbtn{
+	width: 60px;
+	height: 30px;
+	margin-bottom: 6px;
+	background: #ddd;
+}
+.prebtn{
+	width: 28px;
+	height: 17px;
+	margin-left: 10px;
+	background: #ddd;
+	display: inline-block;
+}
+.nextbtn{
+	width: 28px;
+	height: 17px;
+	background: #ddd;
+	display: inline-block;
+}
+.volbtn{
+	width: 60px;
+	height: 8px;
+	margin-top: -4px;
+	background: #ddd;
 }
