@@ -2,6 +2,10 @@
 	margin:0 auto;
 	padding: 0;
 }
+a{
+	text-decoration: none;
+	color: #666;
+}
 ::-webkit-scrollbar {
     width: 4px;
 }
@@ -20,9 +24,9 @@ body{
 	min-width: 1024px;
 	height: 100%;
 	color: #666;
-	background: #ccc;
     font: 13px/2.2 "Century Gothic","Microsoft yahei";
     transition: background .5s;
+    background: #ccc;
 }
 .popup{
 	height: 5px;
@@ -38,17 +42,17 @@ body{
 	height: 100px;
 	margin-top: 15px;
 	position: fixed;
+	z-index: 1;
 }
-.portraitorsculpture{ 
+.portraitorscul-pture{ 
 	width: 100px;
 	height:100px;
 	line-height: 100px;
 	text-align:center; 
-	vertical-align: middle;
 	float: left;
 	background: #fff;
 }
-.portraitorsculpture img{
+.portraitorscul-pture img{
 	width: 80px;
 	height: 80px;
 	vertical-align:middle;
@@ -56,13 +60,13 @@ body{
 	-moz-transition: -moz-transform 0.4s ease-out;
 	transition: transform 0.4s ease-out;
 }
-.portraitorsculpture a:hover img{
+.portraitorscul-pture a:hover img{
 	-webkit-transform: rotate(360deg);
 	-moz-transform: rotate(360deg);
 	transform: rotate(360deg);
 }
 
-.contentmusic{
+.music-content{
 	width: 720px;
 	height: 80px;
 	padding: 10px;
@@ -70,7 +74,7 @@ body{
 	float: left;
 	background: #fff;
 }
-.contentmusic h4{
+.music-content h4{
 	font-size: 15px;
 	margin-top: 10px;
 	line-height: 15px;
@@ -79,20 +83,21 @@ body{
     color: #aaa;
     float: left;
 }
-.musictime{
+.music-time{
 	margin-top: 12px;
 	font-size: 14px;
 	line-height: 14px;
 	float: right;
 }
-.progressbar{
+.progress-bar{
 	width: 720px;
 	height: 8px;
 	margin-top: 38px;
-	background: #ddd;
 	clear: both;
+	background: #ddd;
+	
 }
-.progressbarpass{
+.progress-bar-pass{
 	    width: 99%;
         height: 100%;
         border-radius: 1px;
@@ -103,7 +108,7 @@ body{
         -webkit-animation: loader 1s linear infinite;
         -o-animation: loader 1s linear infinite;    
 }
-.progressbar:hover .progressbarpass{
+.progress-bar:hover .progress-bar-pass{
         animation-play-state: paused;
         -moz-animation-play-state: paused;
         -o-animation-play-state: paused;
@@ -113,7 +118,7 @@ body{
 @-moz-keyframes loader { from { width: 0%; } to { width: 100%; } } 
 @-webkit-keyframes loader { from { width: 0%; } to { width: 100%; } } 
 @-o-keyframes loader { from { width: 0%; } to { width: 100%; } }
-.progressbartag{
+.progress-bar-tag{
 	width: 94px;
 	height: 28px;
 	line-height:28px; 
@@ -124,13 +129,11 @@ body{
 	background: #ddd;
 	
 }
-.progressbartag:hover{
-	background: #aaa;
-}
-.progressbartag:last-child{
+
+.progress-bar-tag:last-child{
 	margin-right: 0px;
 }
-.musiccontrol{
+.music-control{
 	width: 80px;
 	height: 80px;
 	margin-left: 10px;
@@ -138,7 +141,7 @@ body{
 	float: left;
 	background: #fff;
 }
-.musiccontrol-inner{
+.music-control-inner{
 	width: 80px;
 	height: 73px;
 	padding-top: 7px;
@@ -147,25 +150,134 @@ body{
 .stopbtn{
 	width: 60px;
 	height: 30px;
-	margin-bottom: 6px;
+	line-height: 30px;
+	margin-bottom: 3px;
+	text-align: center;
 	background: #ddd;
 }
+.stopbtn i{
+	width: 14px;
+	height: 11px;
+	display: inline-block;
+	background: url(images/musiccontrol.png) no-repeat;
+}
+
 .prebtn{
 	width: 28px;
 	height: 17px;
+	line-height: 22px;
 	margin-left: 10px;
-	background: #ddd;
+	text-align: center;
 	display: inline-block;
+	background: #ddd;
+}
+.prebtn i{
+	width: 14px;
+	height: 12px;
+	display: inline-block;
+	background: url(images/musiccontrol.png) no-repeat 0px -13px;
 }
 .nextbtn{
 	width: 28px;
 	height: 17px;
-	background: #ddd;
+	line-height: 22px;
+	text-align: center;
 	display: inline-block;
+	background: #ddd;
+	
+}
+.nextbtn i{
+	width: 14px;
+	height: 11px;
+	display: inline-block;
+	background: url(images/musiccontrol.png) no-repeat 0px -12px;
+	-moz-transform:rotate(180deg); 
+	-webkit-transform:rotate(180deg);
+	transform:rotate(180deg);
 }
 .volbtn{
 	width: 60px;
 	height: 8px;
 	margin-top: -4px;
 	background: #ddd;
+}
+.volbtn i{
+	width: 50%;
+	height: 100%;
+	display: inline-block;
+	position: relative;
+	top: -10px;
+	background: #bbb;
+}
+.container{
+	width: 620px;
+	height: 900px;
+	top: 125px;
+	position: relative;
+	float: left;
+	
+}
+.post-main{
+	width: 100%;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	background: #eee;
+}
+.post-main h2{
+	line-height: 40px;
+	text-align: center;
+}
+.article-img{
+	width: 560px;
+	height: 410px;
+	line-height: 410px;
+	border-radius: 3px;
+	text-align: center;
+	background: #e1e1e1;
+	
+}
+.post-main img{
+	width: 98%;
+	border-radius: 3px;
+	vertical-align: middle;
+}
+.post-main:hover .article-img,.progress-bar-tag:hover{
+	background:  #878787;
+	color: #fff;
+    opacity: .6;
+    -webkit-transition: all .5s;
+    -moz-transition: all .5s;
+    -ms-transition: all .5s;
+    -o-transition: all .5s;
+    transition: all .5s;
+}
+.article-content{
+	margin-top: 20px;
+	width: 560px;
+}
+.address{
+	width: 540px;
+	margin-top: 20px;
+	padding: 10px;
+	background: #e1e1e1;
+}
+.address p{
+	line-height: 30px;
+}
+.post-meta{
+	width: 560px;
+	margin-top: 10px;
+	padding: 10px 30px;
+	position: relative;
+	float: left;
+	background: #eee;
+}
+.nav-main{
+	width: 330px;
+	height: 900px;
+	top: 125px;
+	left: 10px;
+	position: relative;
+	float: right;
+	background: blue;
 }
