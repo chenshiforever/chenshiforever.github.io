@@ -1,0 +1,37 @@
+*{
+	margin: 0 auto;
+	padding: 0;
+}
+a{
+	text-decoration: none;
+	color: #000;
+}
+li{
+	list-style: none;
+}
+#tabpan-1{
+	
+}
+#tabpan-1 .common-tab{
+	width: 400px;
+	height: 50px;
+	background: #f4f4f4;
+}
+#tabpan-1 .common-tab li{
+	padding: 0 29px;
+	margin-left: 1px;
+	line-height: 50px;
+	float: left;
+}
+#tabpan-1 .common-tab li:hover,.actived{
+	background: #ccc;
+}
+#tabpan-1 .common-tab-content{
+	width: 400px;
+	height: 225px;
+	overflow: hidden;
+}
+#tabpan-1 .common-tab-content li img{
+	width: 400px;
+	float: left;
+}
