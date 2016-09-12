@@ -9,8 +9,8 @@ a{
 li{
 	list-style: none;
 }
-#tabpan-1{
-	
+#tabpan-1,#tabpan-2,#tabpan-3,#tabpan-4{
+	margin-bottom: 20px;
 }
 #tabpan-1 .common-tab{
 	width: 400px;
@@ -34,4 +34,138 @@ li{
 #tabpan-1 .common-tab-content li img{
 	width: 400px;
 	float: left;
+}
+
+
+
+#tabpan-2 .hover-tab{
+	width: 400px;
+	height: 50px;
+	background: #f4f4f4;
+}
+#tabpan-2 .hover-tab li{
+	padding: 0 29px;
+	margin-left: 1px;
+	line-height: 50px;
+	float: left;
+}
+#tabpan-2 .hover-tab li:hover,.actived{
+	background: #ccc;
+}
+#tabpan-2 .hover-tab-content{
+	width: 400px;
+	height: 225px;
+	overflow: hidden;
+}
+#tabpan-2 .hover-tab-content li img{
+	width: 400px;
+	float: left;
+}
+
+
+
+
+#tabpan-3 .animate-tab{
+	width: 400px;
+	height: 50px;
+	background: #f4f4f4;
+}
+#tabpan-3 .animate-tab li{
+	padding: 0 29px;
+	margin-left: 1px;
+	line-height: 50px;
+	float: left;
+}
+#tabpan-3 .animate-tab li:hover,.actived{
+	background: #ccc;
+}
+#tabpan-3 .animate-tab-content-outer{
+	width: 400px;
+	height: 225px;
+	overflow: hidden;
+}
+#tabpan-3 .animate-tab-content-inner{
+	width: 1200px;
+
+}
+#tabpan-3 .animate-tab-content-inner li{
+	width: 400px;
+	float: left;
+}
+#tabpan-3 .animate-tab-content-inner li img{
+	width: 400px;
+}
+
+
+#tabpan-4{
+	position: relative;
+}
+
+#tabpan-4 .autoplay-tab{
+	width: 400px;
+	height: 50px;
+	background: #f4f4f4;
+}
+#tabpan-4 .autoplay-tab li{
+	padding: 0 29px;
+	margin-left: 1px;
+	line-height: 50px;
+	float: left;
+}
+#tabpan-4 .autoplay-tab li:hover,.actived{
+	background: #ccc;
+}
+#tabpan-4 .autoplay-tab-content-outer{
+	width: 400px;
+	height: 225px;
+	overflow: hidden;
+}
+#tabpan-4 .autoplay-tab-content-inner{
+	width: 1200px;
+
+}
+#tabpan-4 .autoplay-tab-content-inner li{
+	width: 400px;
+	float: left;
+}
+#tabpan-4 .autoplay-tab-content-inner li img{
+	width: 400px;
+}
+#tabpan-4 .autoplay-btn{
+	width: 400px;
+	height: 30px;
+    position: absolute;
+
+}
+#tabpan-4 .autoplay-btn span:first-child{
+	left: -25px;
+	top: 100px;
+	width: 10px;
+	height: 30px;
+	line-height: 30px;
+	background: #ccc;
+ 	position: relative;
+	display: inline-block;
+}
+#tabpan-4 .autoplay-btn span:nth-child(2){
+	left: 180px;
+	top: 100px;
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	border-radius: 30px;
+	text-align: center;
+	background: #ccc;
+ 	position: relative;
+	display: inline-block;
+}
+#tabpan-4 .autoplay-btn span:last-child{
+	left: 370px;
+	top: 100px;
+	width: 10px;
+	height: 30px;
+	line-height: 30px;
+	background: #ccc;
+ 	position: relative;
+	display: inline-block;
 }

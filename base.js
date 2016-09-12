@@ -24,7 +24,9 @@ function Base(args) {
                     childElements = [];
                     
                     for (var j = 0; j < node.length; j++) {
+                    
                         var temps = this.getClass(elements[i].substring(1), node[j]);
+                    
                         for (var k = 0; k < temps.length; k++) {
                             childElements.push(temps[k]);
                         }
@@ -97,6 +99,7 @@ Base.prototype.getId = function(id){
 
 //获取class节点数组
 Base.prototype.getClass = function(classname,parentname){
+	
 	var node = null; //得到父元素对象
 	var temps = [];
 	if(parentname != undefined){
@@ -116,7 +119,12 @@ Base.prototype.getClass = function(classname,parentname){
 Base.prototype.addClass =function(className){ 
 	for(var i = 0; i < this.elements.length; i ++){
 		if(!hasClass(this.elements[i],className)){
-			this.elements[i].className +=" " + className; 
+			if(haveClass(this.elements[i])){
+				this.elements[i].className +=" " + className; 
+			}else{
+				this.elements[i].className +="" + className; 
+			}
+			
 		}
 	}
 	return this;
@@ -178,6 +186,7 @@ Base.prototype.last = function(id){
 
 //获取某一个节点在整个节点组中是第几个索引
 Base.prototype.index = function () {
+	
 	var children = this.elements[0].parentNode.children;
 	for (var i = 0; i < children.length; i ++) {
 		if (this.elements[0] == children[i]) return i;
@@ -185,7 +194,7 @@ Base.prototype.index = function () {
 };
 //获取某一个节点在整个节点组中的兄弟
 Base.prototype.sibiling = function () {
-	var children = this.elements[0].parentNode.children;
+	var children = this.elements[0].parentNode.children;   //children是只读的，不能用splice来删除元素
 	var elements=[];
 	for (var i = 0; i < children.length; i ++) {
 		if (this.elements[0] !== children[i]) {
@@ -220,7 +229,7 @@ Base.prototype.removeRule = function(num,index){ //num表示在第几个样式�
 //innerHTML
 Base.prototype.html = function(value){
 	for(var i = 0;i < this.elements.length; i ++){
-		if(argument.length == 0){
+		if(arguments.length == 0){
 			return this.elements[i].innerHTML;
 		}
 		this.elements[i].innerHTML = value;
@@ -290,6 +299,23 @@ Base.prototype.click = function(fn){
 		addEvent(this.elements[i],'click',fn);
 	}
 	return this;
+}
+//on方法，为了多个事件执行
+Base.prototype.on = function(type,fn){
+	for(var i = 0;i < this.elements.length; i ++){
+		addEvent(this.elements[i],type,fn);
+	}
+	return this;
+}
+//offset
+Base.prototype.offset = function(type,fn){
+	var element=this.elements[0];
+	return {
+		top:element.offsetTop,
+		left:element.offsetLeft,
+		width:element.offsetWidth,
+		height:element.offsetHeight
+	}
 }
 //resize
 Base.prototype.resize = function(fn){
@@ -449,9 +475,14 @@ function getStyle(element,attr){
 		return parseFloat(element.currentStyle[attr]);
 	}
 }
+
 //判断class是否存在
 function hasClass(element,className){
 	return element.className.match(new RegExp('(\\s|^)' +className +'(\\s|$)'));
+}
+//是否有class
+function haveClass(element){
+	return element.getAttribute("class") && trim(element.getAttribute("class")) ;
 }
 //兼容添加css规则
 function insertRule(sheet,selectorText,cssText,position){
@@ -497,6 +528,29 @@ function getScroll(){
 		left:document.documentElement.scrollLeft || document.body.scrollLeft
 	}
 }
+
+
+// 简单的节流函数
+function throttle(func, wait, mustRun) {   //这种return函数的方式不会污染全局变量
+    var timeout,
+        startTime = new Date();
+    return function() {   
+        var context = this,
+            args = arguments,
+            curTime = new Date();
+        clearTimeout(timeout);
+        // 如果达到了规定的触发时间间隔，触发 handler
+        if(curTime - startTime >= mustRun){
+            func.apply(context,args);
+            startTime = curTime;
+        // 没达到触发间隔，重新设定定时器
+        }else{
+            timeout = setTimeout(func, wait);
+        }
+    };
+};
+
+
 //功能,应该做成插件
 //拖跩
 //
@@ -574,6 +628,7 @@ Base.prototype.drag = function(){//传入可拖拽区域需要$("div")形式,必
 //mul  同步多个动画
 //
 Base.prototype.animate = function(obj){
+
 	for(var i = 0; i < this.elements.length; i ++){
 		var element = this.elements[i];
 		var attr = obj["attr"] =="x" ? "left" : obj["attr"] == "y" ? "top" : obj["attr"] == "w" ? "width" : obj["attr"] == "h" ? "height" : obj["attr"] == "o" ? "opacity" : "left";
@@ -590,7 +645,6 @@ Base.prototype.animate = function(obj){
 		}else if(alter == undefined && target == undefined && mul == undefined){
 			throw new Error("alter以及target参数错误啦！");
 		}
-		
 		if(start > target){
 			step = -step;
 		}
@@ -612,11 +666,13 @@ Base.prototype.animate = function(obj){
 			for(var i in mul){
 				attr = i == "x"?"left":i == "y"?"top":i == "w"?"width":i=="h"?"height":i == "o" ? "opacity":i != undefined ? i : "left";
 				target = mul[i];
-			
 				if(type == "buffer"){
+					
 					step = attr == "opacity" ? (target - parseFloat(getStyle(element,attr)) *100)/speed :(target - parseInt(getStyle(element,attr)))/speed;
 					step = step > 0 ?Math.ceil(step) : Math.floor(step);
+					
 				}
+				
 				if(attr == "opacity"){//在透明度里面
 					if(step == 0){ //这三个if是判断是不是快要到终点了
 						setOpacity();
@@ -635,7 +691,6 @@ Base.prototype.animate = function(obj){
 				} else{ //非透明度
 					
 					if(step == 0||(step > 0 && Math.abs(getStyle(element, attr) - target) <= step) || (step < 0 && (getStyle(element, attr) - target) <= Math.abs(step))){
-						
 						setTarget();
 					} else {
 						element.style[attr] = getStyle(element, attr) + step + 'px';
