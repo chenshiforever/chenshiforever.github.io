@@ -8,11 +8,12 @@ function Base(args) {
         //css
         
         if (args.indexOf(' ') != -1) {
-            var elements = args.split(' ');
-            var childElements = [];
-            var node = [];
+            var elements = args.split(' '),
+            	childElements = [],
+            	node = [],
+            	i=0;
             
-            for (var i = 0; i < elements.length; i++) {
+            for (; i < elements.length; i++) {
                 if (node.length == 0) node.push(document);
                 switch (elements[i].charAt(0)) {
                 case '#':
@@ -100,8 +101,8 @@ Base.prototype.getId = function(id){
 //获取class节点数组
 Base.prototype.getClass = function(classname,parentname){
 	
-	var node = null; //得到父元素对象
-	var temps = [];
+	var node = null, //得到父元素对象
+		temps = [];
 	if(parentname != undefined){
 		node = parentname;
 	}else{
@@ -148,14 +149,15 @@ Base.prototype.getName = function(name){
 }
 //tagname
 Base.prototype.getTagName = function(tagname,parentname){
-	var node = null; //得到父元素对象
-	var temps = [];
+	var node = null, //得到父元素对象
+		temps = [],
+		tags;
 	if(parentname != undefined){
 		node = parentname;
 	}else{
 		node = document;
 	}
-	var tags = node.getElementsByTagName(tagname);//这是类数组nodelist
+	tags = node.getElementsByTagName(tagname);//这是类数组nodelist
 	for (var i = 0; i < tags.length; i ++ ){
 		temps.push(tags[i]);
 	}
@@ -186,7 +188,6 @@ Base.prototype.last = function(id){
 
 //获取某一个节点在整个节点组中是第几个索引
 Base.prototype.index = function () {
-	
 	var children = this.elements[0].parentNode.children;
 	for (var i = 0; i < children.length; i ++) {
 		if (this.elements[0] == children[i]) return i;
@@ -194,8 +195,8 @@ Base.prototype.index = function () {
 };
 //获取某一个节点在整个节点组中的兄弟
 Base.prototype.sibiling = function () {
-	var children = this.elements[0].parentNode.children;   //children是只读的，不能用splice来删除元素
-	var elements=[];
+	var children = this.elements[0].parentNode.children,  //children是只读的，不能用splice来删除元素
+		elements=[];
 	for (var i = 0; i < children.length; i ++) {
 		if (this.elements[0] !== children[i]) {
 			elements.push(children[i]);
@@ -204,6 +205,7 @@ Base.prototype.sibiling = function () {
 	this.elements=elements;
 	return this;
 };
+
 //css
 Base.prototype.css = function(attr,value){
 	for(var i = 0; i < this.elements.length; i ++){
@@ -213,6 +215,11 @@ Base.prototype.css = function(attr,value){
 		this.elements[i].style[attr] = value;
 	}
 	return this;
+}
+//len
+Base.prototype.len = function(){
+	
+	return this.elements.length;
 }
 //添加css规则
 Base.prototype.addRule = function(num,selectorText,cssText,position){ //num表示在第几个样式表里面添加
@@ -238,8 +245,8 @@ Base.prototype.html = function(value){
 }
 //center
 Base.prototype.center = function(width,height){
-	var top =(getClientInner().height -height)/2;
-	var left =(getClientInner().width -width)/2;
+	var top =(getClientInner().height -height)/2,
+		left =(getClientInner().width -width)/2;
 	for(var i = 0;i < this.elements.length; i ++){
 		this.elements[i].style.position = "absolute"; 
 		this.elements[i].style.top = top +"px";
@@ -347,8 +354,8 @@ Base.prototype.resize = function(fn){
 //检测浏览器ua
 (function(){
 	window.sys = {};
-	var ua = navigator.userAgent.toLowerCase();
-	var s;
+	var ua = navigator.userAgent.toLowerCase(),
+		s;
 	(s = ua.match(/msie([\d.]+)/)) ? sys.ie = s[1] :
 	(s = ua.match(/firefox\/([\d.]+)/)) ? sys.ff = s[1]:
 	(s = ua.match(/chrome\/([\d.]+)/)) ? sys.chrome = s[1]:
@@ -358,8 +365,8 @@ Base.prototype.resize = function(fn){
 })()
 //Dom加载
 function addDomLoad(fn){
-	var isReady = false;
-	var timer = null;
+	var isReady = false,
+		timer = null;
 	function doReady(){
 		if(timer)clearInterval(timer);
 		if(isReady) return;
@@ -371,11 +378,15 @@ function addDomLoad(fn){
 			if (document && document.getElementById && document.getElementsByTagName && document.body) {
 				doReady();
 			}
+			
 		},1);
 	}
 	if(document.addEventListener){
-		addEvent(document,'DOMContentLoaded',function(){
+		addEvent(document,'DOMContentLoaded',function(){  //这玩意不会等待css的加载
+			
+			
 			fn();
+			
 			removeEvent(document,'DOMContentLoaded',arguments.callee);
 		})
 	}else if(sys.ie && sys.ie<9) {
@@ -393,6 +404,7 @@ function addDomLoad(fn){
 //绑定事件
 addEvent.id = 1;  //如果有很多不同的事件，他们的id是一直在递增的并不是从0开始的
 function addEvent(obj,type,fn){
+
 	if(typeof obj.addEventListener != "undefined"){
 		obj.addEventListener(type,fn,false);
 	} else {
@@ -412,8 +424,8 @@ function addEvent(obj,type,fn){
 
 //执行事件
 addEvent.exec = function (event){  
-	var e = event || addEvent.fixEvent(window.event);	
-	var es = this.events[e.type]; //this是div对象
+	var e = event || addEvent.fixEvent(window.event),	
+		es = this.events[e.type]; //this是div对象
 	for(var i in es){
 		es[i].call(this,e);
 	}
@@ -468,8 +480,9 @@ function getClientInner(){
 	}	
 } 
 //兼容获取style
-function getStyle(element,attr){
+function getStyle(element,attr){//这里返回的是不带单位的,已经parseFloat
 	if(typeof window.getComputedStyle != "undefined"){
+		//console.log(getComputedStyle(element,false)[attr]);
 		return parseFloat(window.getComputedStyle(element,null).getPropertyValue(attr));
 	} else if(typeof element.currentStyle != "undefined"){
 		return parseFloat(element.currentStyle[attr]);
@@ -531,8 +544,8 @@ function getScroll(){
 
 
 // 简单的节流函数
-function throttle(func, wait, mustRun) {   //这种return函数的方式不会污染全局变量
-    var timeout,
+function throttle(func, wait, mustRun) {   //这种return函数的方式不会污染全局变量									
+    var timeout,						   //但是这样this传不进来了
         startTime = new Date();
     return function() {   
         var context = this,
@@ -549,8 +562,23 @@ function throttle(func, wait, mustRun) {   //这种return函数的方式不会�
         }
     };
 };
-
-
+//快排
+function qukic(arr){
+	if(arr.length <=1)return arr;
+	var len=arr.length,
+		leftArr=[],
+		rightArr=[],
+		baseNum=arr.splice(Math.floor(len/2),1),
+		i=0;
+	for(;i < len-1; i++){
+		if(arr[i] < baseNum){
+			leftArr.push(arr[i])
+		}else{
+			rightArr.push(arr[i]);
+		}
+	}
+	return qukic(leftArr).concat([baseNum],qukic(rightArr));	
+}
 //功能,应该做成插件
 //拖跩
 //
@@ -560,12 +588,11 @@ Base.prototype.drag = function(){//传入可拖拽区域需要$("div")形式,必
 		addEvent(this.elements[i],'mousedown', function(e){//这个this是base对象  这里表示在相应的div区域内能够点击下去
 			$(this).css("position","absolute");
 			if(trim(this.innerHTML).length == 0) e.preDef();
-			var e = getEvent(e);
-			var _this =this;	//这个this是this.elements[i]对象就是div对象，必须传递这个对象
-			var diffX = e.clientX - _this.offsetLeft;
-			var diffY = e.clientY - _this.offsetTop;
-			//自定义拖拽区域
-			var flag = false;
+			var e = getEvent(e),
+				_this =this,	//这个this是this.elements[i]对象就是div对象，必须传递这个对象
+				diffX = e.clientX - _this.offsetLeft,
+				diffY = e.clientY - _this.offsetTop,
+				flag = false; //自定义拖拽区域
 			
 			for (var i = 0; i < tags.length; i ++) {
 				if (e.target == tags[i]) {
@@ -581,8 +608,8 @@ Base.prototype.drag = function(){//传入可拖拽区域需要$("div")形式,必
 				removeEvent(document, 'mouseup', up);
 			}
 			function move(e){
-				var left = e.clientX  - diffX;
-				var top = e.clientY - diffY;
+				var left = e.clientX  - diffX,
+					top = e.clientY - diffY;
 				
 				if(left < 0){
 					left = 0;
@@ -617,29 +644,29 @@ Base.prototype.drag = function(){//传入可拖拽区域需要$("div")形式,必
 }
 //动画
 //参数
-//attr x:左，y：上，w：宽，h：高，o：透明度，默认左
+//attr x:左，y：上，w：宽，h：高，o：透明度，默认左，透明度传小数
 //start 开始动画的参数，透明度在0-1以内
 //time 多久一次动画
 //step 一次走多远
 //alter 增量，如果没有target，taeget=start+alter
 //target 目标，到哪里 alter与target必须有一个
-//type 运动方式 匀速与缓冲
+//type 运动方式 匀速与缓冲，flex
 //speed 速度 默认6，主要用于设置缓冲时候
 //mul  同步多个动画
 //
 Base.prototype.animate = function(obj){
 
 	for(var i = 0; i < this.elements.length; i ++){
-		var element = this.elements[i];
-		var attr = obj["attr"] =="x" ? "left" : obj["attr"] == "y" ? "top" : obj["attr"] == "w" ? "width" : obj["attr"] == "h" ? "height" : obj["attr"] == "o" ? "opacity" : "left";
-		var start = obj["start"] != undefined ? obj["start"]: attr == "opacity" ? parseFloat(getStyle(element,attr)) * 100 :parseInt(getStyle(element,attr));
-		var time = obj["time"] != undefined ? obj["time"] : 10;
-		var step = obj["step"] != undefined ? obj["step"] : 1;
-		var alter = obj["alter"] ; //增量
-		var target = obj["target"] ; //目标
-		var type = obj["type"] == "constant" ? "constant" : "buffer";
-		var speed = obj["speed"] != undefined ? obj["speed"] : 6;
-		var mul = obj["mul"];
+		var element = this.elements[i],
+			attr = obj["attr"] =="x" ? "left" : obj["attr"] == "y" ? "top" : obj["attr"] == "w" ? "width" : obj["attr"] == "h" ? "height" : obj["attr"] == "o" ? "opacity" : obj["attr"] == "z"? "z-index":obj["attr"] == undefined ? obj["attr"]:"left",
+			start = obj["start"] != undefined ? obj["start"]: attr == "opacity" ? getStyle(element,attr) * 100 :getStyle(element,attr),
+			time = obj["time"] != undefined ? obj["time"] : 1000/60,
+			step = obj["step"] != undefined ? obj["step"] : 1,
+			alter = obj["alter"] , //增量
+			target = obj["target"] , //目标
+			type = obj["type"] == "constant" ? "constant" : obj["type"] =="flex" ? "flex" :"buffer",
+			speed = obj["speed"] != undefined ? obj["speed"] : 6,
+			mul = obj["mul"];
 		if(alter != undefined && target == undefined){
 			target = target + alter;
 		}else if(alter == undefined && target == undefined && mul == undefined){
@@ -648,11 +675,12 @@ Base.prototype.animate = function(obj){
 		if(start > target){
 			step = -step;
 		}
-		if(attr == "opacity"){
-			
+		if(attr === "opacity"){
 			element.style.opacity = parseInt(start)/100;
 			element.style.filter = "alpha(opacity ="+ parseInt(start) + ")";			
-		} else {
+		} else if(attr === "z-index"){
+			element.style[attr] = start;
+		}else{
 			element.style[attr] = start + "px";
 	
 		}
@@ -664,76 +692,105 @@ Base.prototype.animate = function(obj){
 		 element.timer = setInterval(function(){
 			var flag=true;
 			for(var i in mul){
-				attr = i == "x"?"left":i == "y"?"top":i == "w"?"width":i=="h"?"height":i == "o" ? "opacity":i != undefined ? i : "left";
-				target = mul[i];
+				attr = i == "x"?"left":i == "y"?"top":i == "w"?"width":i=="h"?"height":i == "o" ? "opacity": i == "z" ? "z-index" : i != undefined ? i : "left";
+				start = attr == "opacity" ? getStyle(element,attr) * 100 :getStyle(element,attr),
+				target = attr == "opacity" ? mul[i] * 100 :mul[i];
 				if(type == "buffer"){
-					
-					step = attr == "opacity" ? (target - parseFloat(getStyle(element,attr)) *100)/speed :(target - parseInt(getStyle(element,attr)))/speed;
+					step = attr == "opacity" ? (target - getStyle(element,attr) *100)/speed :(target - getStyle(element,attr))/speed;
 					step = step > 0 ?Math.ceil(step) : Math.floor(step);
+				} else if(type == "flex"){
+					step += attr == "opacity" ? (target - getStyle(element,attr) *100)/speed :(target - getStyle(element,attr))/speed;
+					step*=0.75;
 					
 				}
-				
 				if(attr == "opacity"){//在透明度里面
-					if(step == 0){ //这三个if是判断是不是快要到终点了
+					if(Math.abs(step) <= 0.1){ //这三个if是判断是不是快要到终点了，等于0的时候始终冒一点bug，改成0.1就好了
 						setOpacity();
-					}else if(step >0 && Math.abs(parseFloat(getStyle(element,attr))*100 - target) <= step){
+					}else if(step >0 && Math.abs(getStyle(element,attr)*100 - target) <= step){
 						setOpacity();
-					} else if(step <0 && Math.abs(parseFloat(getStyle(element,attr))*100 - target) <= Math.abs(step)){
+					} else if(step <0 && Math.abs(getStyle(element,attr)*100 - target) <= Math.abs(step)){
 						setOpacity();
 					} else {
-						
 						//这里是执行的核心动画
-						var temp =parseFloat(getStyle(element,attr))*100;
+						var temp =Math.round(getStyle(element,attr)*100);
 						element.style.opacity = parseInt(temp + step)/100;
 						element.style.filter = "alpha=(opacity="+parseInt(temp+step) +")";
 					}
-					if(parseInt(target)!=parseInt(parseFloat(getStyle(element,attr))*100)) flag =false;
+					if(parseInt(target)!=parseInt(getStyle(element,attr)*100)) flag =false;
 				} else{ //非透明度
-					
-					if(step == 0||(step > 0 && Math.abs(getStyle(element, attr) - target) <= step) || (step < 0 && (getStyle(element, attr) - target) <= Math.abs(step))){
-						setTarget();
-					} else {
-						element.style[attr] = getStyle(element, attr) + step + 'px';
+					if(type == "flex"){ 
+						
+						if(Math.abs(step) <= 1){
+							setTarget();	
+						
+						} else {
+							
+							if(attr === "z-index"){
+								element.style[attr] = getStyle(element, attr) + step;
+							}else{							
+								if(attr == "width"){  //如果是宽高，就从中间增加
+									element.style["margin-left"] = getStyle(element, "margin-left") -step/2 + 'px';
+								} else if(attr == "height"){
+									element.style["margin-top"] = getStyle(element, "margin-top") -step/2 + 'px';
+								} 
+								element.style[attr] = getStyle(element, attr) + step + 'px';
+							}
+						}
+					}else {
+						if(Math.abs(step) <= 0.1){
+							setTarget();	
+							
+						}else if(step > 0 && Math.abs(getStyle(element, attr) - target) <= step){
+							setTarget();	
+							
+						} else if(step < 0 && (getStyle(element, attr) - target) <= Math.abs(step)){
+							setTarget();	
+							
+						}else {
+							if(attr === "z-index"){
+								element.style[attr] = getStyle(element, attr) + step;
+							}else{
+								element.style[attr] = getStyle(element, attr) + step + 'px';
+							}
+						}
 					}
-					if(parseInt(target)!=parseInt(parseFloat(getStyle(element,attr)))) flag =false;
+					//console.log(getStyle(element,attr),target);
+					if(parseInt(target)!=parseInt(getStyle(element,attr))) flag =false;
 				}
 			}
-			if(flag){
+			if(flag){			
 				clearInterval(element.timer);
 				if(obj.fn !=undefined)obj.fn();
 			}
 		},time);
-		function setTarget() {
-			
-			element.style[attr] = target + 'px';
-			//clearInterval(element.timer);
-			if(obj.fn)obj.fn();
+		function setTarget() {   //z-index,other
+			if(attr === "z-index"){
+				element.style[attr] = target;
+			}else{
+				element.style[attr] = target + 'px';
+				
+			}
 		}	
-		function setOpacity() {
+		function setOpacity() { //opacity
 			element.style.opacity = parseInt(target) / 100;
 			element.style.filter = 'alpha(opacity=' + parseInt(target) + ')';
-			//clearInterval(element.timer);
-			if(obj.fn)obj.fn();
 		}	
 	}
 	return this;
 }
 
 
-/*//调用方法  
-ajax({
-	method : post,
-	url : "demo.php",
-	data:{
-		year : 2016,
-		name : name,
-		age :18
-	},
-	async:false,
-	sucess:function(data){
-		//doSomething
-	}
-})*/
+//  var data="{\r\n\"toparty\":\"1\",\r\n\"msgtype\":\"text\",\r\n\"agentid\":1,\r\n\"text\":{\r\n\"content\":\"222\"\r\n},\r\n\"safe\":0\r\n}";
+// //调用方法  
+// ajax({
+// 	method : "get",
+// 	url : "demo.php",
+// 	data:JSON.parse(data),
+// 	async:false,
+// 	sucess:function(data){
+// 		//doSomething
+// 	}
+// })
 //参数
 //method get/post
 //url 服务器地址
@@ -742,7 +799,7 @@ ajax({
 //sucess 成功就回调
 //
 function ajax(obj){
-	var xhr = (function(){
+	var xhr = (function(){   //这里有个bug，每次调用都会重复生成xhr对象
 		if(typeof XMLHttpRequest != "undefined"){
 			return new XMLHttpRequest();
 		} else if(typeof ActiveXObject != "undefined"){
@@ -791,7 +848,6 @@ function ajax(obj){
 			console.log('获取数据错误！错误代号：' + xhr.status + '，错误信息：' + xhr.statusText);
 		}
 	}
-
 }
 
 

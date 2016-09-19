@@ -12,3 +12,770 @@
 </body>
 <script type="text/javascript" src="canvas.js"></script>
 </html>
+<script type="text/javascript">
+
+
+
+
+
+
+
+
+
+/**
+ * Created with JetBrains WebStorm.
+ * User: Soul
+ * Date: 13-9-9
+ * Time: 上午2:17
+ * To change this template use File | Settings | File Templates.
+ */
+var BeautifulWorld = {
+    createNameSpace : function (nameString) {
+
+        var createObject = BeautifulWorld,
+            nameArray = nameString.split("."),
+            length = nameArray.length,
+            i;
+
+        if (nameArray[0] === "BeautifulWorld") {
+            nameArray.shift();
+        }
+        for (i = 0; i < length; i = i + 1) {
+            if (!(nameArray[i] in createObject)) {
+                createObject[nameArray[i]] = {};
+            }
+            createObject = createObject[nameArray[i]];
+        }
+
+        return createObject;
+    }
+};
+
+// namespace
+BeautifulWorld.createNameSpace("BeautifulWorld.ajax");
+BeautifulWorld.createNameSpace("BeautifulWorld.eventAdd");
+BeautifulWorld.createNameSpace("BeautifulWorld.form.verify");
+BeautifulWorld.createNameSpace("BeautifulWorld.form.placeholder");
+BeautifulWorld.createNameSpace("BeautifulWorld.form.placeholder.setPlaceholder");
+BeautifulWorld.createNameSpace("BeautifulWorld.nav");
+BeautifulWorld.createNameSpace("BeautifulWorld.scroll.addScrollEvent");
+BeautifulWorld.createNameSpace("BeautifulWorld.scroll.cancluateTop");
+BeautifulWorld.createNameSpace("BeautifulWorld.bgMove");
+BeautifulWorld.createNameSpace("BeautifulWorld.opacityCompatibility");
+BeautifulWorld.createNameSpace("BeautifulWorld.ppt");
+BeautifulWorld.createNameSpace("BeautifulWorld.photograph");
+//method
+
+//photograph
+
+BeautifulWorld.photograph.createDiv = (function (number) {
+    var div,
+        i = 1,
+        ele = [];
+    
+	number = (number == $(".photoPerson").length)?number:$(".photoPerson").length;
+	
+    for (;i <= number;i = i + 1) {
+        div = document.createElement("div");
+        div.className = "personPicture";
+        div.style.backgroundImage = 'url("member/' + i + '.png")';
+        ele.push(div);
+    }
+
+    return ele;
+})();
+
+BeautifulWorld.photograph.append = (function () {
+    var parentDiv = $(".photoPerson"),
+        beforeDiv = $(".personName"),
+        childDiv = BeautifulWorld.photograph.createDiv,
+        length = parentDiv.length,
+        i = 0;
+    for (;i < length;i = i +1) {
+        parentDiv[i].insertBefore(childDiv[i],beforeDiv[i]);
+    }
+})();
+
+BeautifulWorld.photograph.judgeXY = function(parent,child){
+    var originX = parent.moveX,
+        originY = parent.moveY;
+    if(child.moveX === originX && child.moveY === originY){
+        child.style.backgroundPosition = "0";     // pass
+    }
+    if(child.moveX > originX && child.moveY === originY){
+        child.style.backgroundPosition = "-164px";    //    pass
+    }
+    if(child.moveX < originX && child.moveY === originY){
+        child.style.backgroundPosition = "-246px";     //
+    }
+    if(child.moveX > originX && child.moveY > originY){
+        child.style.backgroundPosition = "-656px";    //    492px
+    }
+    if(child.moveX > originX && child.moveY < originY){
+        child.style.backgroundPosition = "-492px";   //       656px
+    }
+    if(child.moveX < originX && child.moveY > originY){
+        child.style.backgroundPosition = "-738px";   //
+    }
+    if(child.moveX < originX && child.moveY < originY){
+        child.style.backgroundPosition = "-574px";    //   738px
+    }
+    if(child.moveX === originX && child.moveY < originY){
+        child.style.backgroundPosition = "-328px";    //   pass
+    }
+    if(child.moveX === originX && child.moveY > originY){
+        child.style.backgroundPosition = "-410px"   //   pass
+    }
+}
+BeautifulWorld.photograph.changeBg = function(element,allElement){
+    return function (e) {
+        var i = 0,
+            length = allElement.length;
+        for(;i < length;i = i + 1){
+            BeautifulWorld.photograph.judgeXY(element,allElement[i]);
+        }
+    }
+};
+//ajax start
+BeautifulWorld.ajax = function(){
+    var ajaxObject = new XMLHttpRequest();
+        ajaxObject.addEvent = (function(){
+            if (window.addEventListener){
+                return function(type,fn,upload){
+                    this.addEventListener(type,fn,upload)
+                }
+            }else{
+                return function(type,fn){
+                    this.attachEvent("on" + type,fn)
+                }
+            }
+        })();
+    return function(ajaxParameter){
+        var requestURL = ajaxParameter.url,
+            requestMethod = ajaxParameter.method,
+            sendData = ajaxParameter.send
+        ajaxObject.addEvent("readystatechange",function(){
+              if (ajaxObject.readyState === 4 && ajaxObject.status === 200) {
+                //console.log("你的请求我们已经收到")
+                  if(ajaxParameter.success){
+                      ajaxParameter.success(ajaxObject.responseText);
+                  }
+              }
+        },false);
+        ajaxObject.open(requestMethod,requestURL,true);
+        ajaxObject.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajaxObject.setRequestHeader("X_REQUESTED_WITH","XMLHttpRequest");
+        ajaxObject.send(sendData);
+    }
+};
+
+/* 表单验证 */
+BeautifulWorld.form.placeholder.setPlaceholder = function(color){
+    var stringPlaceholder = this.getAttribute("placeholder");
+
+    this.value = stringPlaceholder;
+    if (color) {
+        this.style["color"] = color;
+    }
+
+    return stringPlaceholder;
+};
+BeautifulWorld.form.placeholder.imitateFocus = function(){
+
+    if(arguments && arguments[0] === this.value){
+        this.value = "";
+    }
+
+    return true;
+}
+BeautifulWorld.form.placeholder.imitateBlur = function(){
+    if(this.value === ""){
+        BeautifulWorld.form.placeholder.setPlaceholder.call(this);
+    }
+};
+BeautifulWorld.form.placeholder.isPlaceholder = (function(){
+
+    var isPlaceholderSupport = "placeholder" in document.createElement("input");
+
+    if(!isPlaceholderSupport){
+        imitateIt();
+    };
+
+})();
+
+// form verify
+BeautifulWorld.form.verify.phoneNumber = function(){
+    var phoneRegexp = /1(3|5|8)\d{9}|(\d{3}|\d{4})-\d{7}/,
+        isPhoneNumber;
+
+    BeautifulWorld.form.verify.phoneNumber = function(){
+        isPhoneNumber = phoneRegexp.test(this.value);
+        return isPhoneNumber;
+    }
+
+    return BeautifulWorld.form.verify.phoneNumber;
+}
+BeautifulWorld.form.verify.email = function(){
+    var emailRegexp = /[0-9a-zA-Z_]*@[0-9a-zA-Z]*./,
+        isEmail;
+
+    BeautifulWorld.form.verify.email = function(){
+        isEmail = emailRegexp.test(this.value);
+        return isEmail;
+    }
+
+    return BeautifulWorld.form.verify.email;
+}
+
+// form placeholder imitate
+function getInput(){
+    return $(".holder")
+};
+
+function imitateIt(){
+    var eleInput = getInput(),
+        i = 0,
+        length = eleInput.length,
+        setPlaceholder = BeautifulWorld.form.placeholder.setPlaceholder,
+        focusPlaceholder = BeautifulWorld.form.placeholder.imitateFocus,
+        blurPlaceholder = BeautifulWorld.form.placeholder.imitateBlur,
+                sendDate = function(i,that){
+                    return function(e){
+                        focusPlaceholder.call(that,that.privateValue);
+                    }
+        },
+        nullDate = function (i,that) {
+           return function(e){
+               blurPlaceholder.call(that)
+           }
+        }
+    for (;i < length;i++) {
+        eleInput[i].privateValue = setPlaceholder.call(eleInput[i],"#313131");
+        eleInput[i].event("focus",sendDate(i,eleInput[i]),false);
+        eleInput[i].event("blur",nullDate(i,eleInput[i]),false);
+    }
+};
+
+//form verify
+BeautifulWorld.form.verify.phoneNumber();
+BeautifulWorld.form.verify.email();
+function getVerify(ele,model){
+    var ele = $(ele),
+        verifyPhoneNumber = model,
+        isPass;
+        isPass = verifyPhoneNumber.call(ele);
+        return isPass;
+}
+function warnUser(ele){
+    ele.css("boxShadow","inset -1px 0px 10px red");
+    ele.css("borderColor","#d54132");
+    ele.css("color","red");
+}
+function recoverUser(ele){
+    ele.css("boxShadow","inset -1px 0px 5px #f0efef");
+    ele.css("borderColor","#e2e1e0");
+    ele.css("color","black");
+}
+$("#phoneNumber").event("blur",function(){
+    if (!getVerify("#phoneNumber",BeautifulWorld.form.verify.phoneNumber)) {
+        warnUser($("#phoneNumber"));
+    }else{
+        recoverUser($("#phoneNumber"))
+    }
+},false);
+$("#email").event("blur",function(){
+    if (!getVerify("#email",BeautifulWorld.form.verify.email)) {
+        warnUser($("#email"));
+    }else{
+        recoverUser($("#email"))
+    }
+},false);
+
+/* nav */
+BeautifulWorld.nav.defaultWidth = 47;
+BeautifulWorld.nav.moveSub = (function(){
+    var ele = $("#nav_move");
+
+    return function(name,target,now){
+        if (now <= target) {
+            BeautifulWorld.nav.leftPosition = target;
+            ele.css(name,target + "px")
+            return;
+        }
+        now = now  - 4;
+        BeautifulWorld.nav.leftPosition = now;
+        ele.css(name,now  + "px");
+        ele.stopTime = setTimeout(function(){
+            BeautifulWorld.nav.moveSub(name,target,now);
+        })
+    }
+})();
+BeautifulWorld.nav.moveAdd = (function(){
+    var ele = $("#nav_move");
+    return function(name,target,now){
+        if (now >= target) {
+            BeautifulWorld.nav.leftPosition = target;
+            ele.css(name,target + "px")
+            return;
+        }
+        now = now  + 4;
+        BeautifulWorld.nav.leftPosition = now;
+        ele.css(name,now  + "px");
+        ele.stopTime = setTimeout(function(){
+            BeautifulWorld.nav.moveAdd(name,target,now);
+        })
+    }
+})();
+
+/* scroll */
+BeautifulWorld.scroll.defaultTo = 0;
+BeautifulWorld.scroll.cancluateTop = (function(idArr){
+    var ele = (function(){
+            var i = 0,
+                arr = [],
+                length = idArr.length;
+            for(;i < length ; i++){
+                arr.push($(idArr[i]))
+            };
+            return arr;
+        })(),
+        topHeight = [0,0,0,0,0],
+        i = 0,
+        length = ele.length;
+
+    for (; i < length ;i++) {
+        topHeight[i] = ele[i].offsetTop - 75;
+    };
+    return topHeight;
+})(["#about","#boss","#displayPhoto","#displayGraduate","#displayWeb","#connectUs"]);
+
+BeautifulWorld.scroll.addScrollEvent = (function(){
+    if (window.addEventListener){
+        window.addEventListener("scroll",function(){
+            BeautifulWorld.scroll.moveScroll();
+        },false)
+    }else{
+        window.attachEvent("onscroll",function(){
+            BeautifulWorld.scroll.moveScroll();
+        })
+    }
+    return function(){};
+})();
+BeautifulWorld.scroll.moveScroll = (function(){
+    var targetHeight = BeautifulWorld.scroll.cancluateTop,
+        eleLi = $(".nav_mouse"),
+        eleSpan = $("#nav_move"),
+        i = 1,
+        length = targetHeight.length,
+        record = 0;
+    return function(e){
+        var toHeight = document.body.scrollTop || document.documentElement.scrollTop;
+        BeautifulWorld.scroll.defaultTo = toHeight;
+        if(toHeight + 10 < record){
+            for( i = 5; i > 0 ; i = i - 1){
+                if ( toHeight > targetHeight[i-1] && toHeight < targetHeight[i]  ) {
+                    BeautifulWorld.scroll.scrollAnimation(i-1,i,eleLi,eleSpan);
+                };
+            }
+            if ( toHeight < targetHeight[1]  ) {
+                BeautifulWorld.scroll.scrollAnimation(0,1,eleLi,eleSpan);
+            };
+
+        }
+        if( toHeight - 10 > record  ){
+            if (toHeight > targetHeight[0] && toHeight < targetHeight[1]) {
+            }
+            for( i = 1; i < length; i = i + 1){
+                if ( toHeight >= targetHeight[i]  && toHeight < targetHeight[i+1]  ) {
+                    BeautifulWorld.scroll.scrollAnimation(i,i-1,eleLi,eleSpan);
+                };
+            }
+            if( toHeight >= targetHeight[5] ){
+                BeautifulWorld.scroll.scrollAnimation(5,4,eleLi,eleSpan);
+            }
+        }
+        record = toHeight;
+    }
+})();
+BeautifulWorld.scroll.scrollAnimation = function(i,k,ele,eleSpan){
+    if( i == 0){
+        BeautifulWorld.nav.defaultWidth = 47;
+        eleSpan.css("width",47 + "px");
+    }else{
+        BeautifulWorld.nav.defaultWidth = 70;
+        eleSpan.css("width",70 + "px");
+    }
+    if( i - k < 0){
+        eleSpan.css("left",ele[i].thisPosition + "px");
+    }else{
+        eleSpan.css("left",ele[i].thisPosition + "px");
+    }
+    BeautifulWorld.nav.defaultPosition = ele[i].thisPosition;
+};
+
+BeautifulWorld.scroll.goMoveToAdd = function(){
+    return function(target,now,e){
+        if (now  >= target) {
+            window.scrollTo(0,target);
+            BeautifulWorld.scroll.defaultTo = target;
+            return;
+        }
+        now = now  + 10;
+        BeautifulWorld.scroll.defaultTo = now;
+        window.scrollTo(0,now);
+        window.stopTime = setTimeout(function(){
+            BeautifulWorld.scroll.goMoveToAdd(target,now,e);
+        })
+    }
+}();
+BeautifulWorld.scroll.goMoveToSub = function(){
+    return function(target,now){
+        if (now  <= target) {
+            window.scrollTo(0,target);
+            BeautifulWorld.scroll.defaultTo = target;
+            return;
+        }
+        now = now  - 10;
+        BeautifulWorld.scroll.defaultTo = now;
+        window.scrollTo(0,now);
+        window.stopTime = setTimeout(function(){
+            BeautifulWorld.scroll.goMoveToSub(target,now);
+        })
+    }
+}();
+/* background Move */
+
+BeautifulWorld.bgMove = (function(){
+    var ele = $("#house"),
+        defaultMove = 0;
+
+    function moveBg(){
+        defaultMove++;
+        ele.css("backgroundPosition",defaultMove + "px" + " 100%");
+        setTimeout(function(){
+            moveBg();
+        },15)
+    };
+    moveBg();
+})();
+
+/* opacity */
+
+BeautifulWorld.opacityCompatibility = (function(){
+    var isOpacitySupport = "opacity" in document.createElement("p").style,
+        isTransition = "transition" in document.createElement("p").style;
+
+    if (!isOpacitySupport){
+        return {
+            filterAdd: function(obj,target){
+                obj.filterOpacity++;
+                obj.css("filter","alpha(opacity=" + obj.filterOpacity + ")");
+                if(obj.filterOpacity === target){
+                    obj.filterOpacity = target;
+                    return;
+                }
+                obj.stopTime = setTimeout(function(){
+                    BeautifulWorld.opacityCompatibility.filterAdd(obj,target);
+                },10)
+            },
+            filterSub: function(obj,target){
+                obj.filterOpacity--;
+                obj.css("filter","alpha(opacity=" + obj.filterOpacity + ")");
+                if(obj.filterOpacity === target){
+                    return;
+                }
+                obj.stopTime = setTimeout(function(){
+                    BeautifulWorld.opacityCompatibility.filterSub(obj,target);
+                },10)
+            },
+            isOpacitySupport: isOpacitySupport
+        }
+    }else{
+        return {
+            filterAdd: function(obj,target){
+                obj.filterOpacity+=0.01;
+                obj.css("opacity", obj.filterOpacity);
+                if(obj.filterOpacity >= target){
+                    obj.filterOpacity = target;
+                    return;
+                }
+                obj.stopTime = setTimeout(function(){
+                    BeautifulWorld.opacityCompatibility.filterAdd(obj,target);
+                },10)
+            },
+            filterSub: function(obj,target){
+                obj.filterOpacity-=0.01;
+                obj.css("opacity",obj.filterOpacity);
+                if(obj.filterOpacity <= target){
+                    obj.filterOpacity = target;
+                    return;
+                }
+                obj.stopTime = setTimeout(function(){
+                    BeautifulWorld.opacityCompatibility.filterSub(obj,target);
+                },10)
+            },
+            isOpacitySupport: isOpacitySupport,
+            isTransition: isTransition
+        }
+    }
+})();
+
+/* ppt */
+BeautifulWorld.ppt.fuckIe = [];
+BeautifulWorld.ppt.fuckIe.push(document.getElementsByClassName("webShow webChange")[0]);
+BeautifulWorld.ppt.getLength = function(ele){
+    return $(ele).length;
+}
+BeautifulWorld.ppt.createDiv = function(contentDiv,parentModel,howMany,group,createWhat){
+    var arr = howMany,
+        howManyDiv,
+        k,
+        z,
+        div,
+        span,
+        howManyDiv =  Math.ceil(arr / group) - 1;
+        for(k = 0;k < howManyDiv;k = k + 1){
+            div = document.createElement("div");
+            div.className = contentDiv;
+            arr = arr - group;
+            for(z = 0; z < arr;z = z + 1){
+                if(z === group){
+                    break;
+                }
+                div.appendChild($(".web")[z]);
+            }
+            parentModel.appendChild(div);
+            BeautifulWorld.ppt.fuckIe.push(div);
+            div.style.display = "none";
+        }
+        div = document.createElement("div");
+        div.className = "buttonGroup";
+        for(k = 0 ; k < howManyDiv + 1 ; k = k + 1){
+            span = document.createElement("span");
+            div.appendChild(span);
+        }
+        parentModel.appendChild(div);
+};
+BeautifulWorld.ppt.createDiv("webShow webChange",$(".pptModel")[2],BeautifulWorld.ppt.getLength(".web"),9);
+/*BeautifulWorld.ppt.createDiv("webShow webChange",$(".pptModel")[2],BeautifulWorld.ppt.getLength(".goWhere"),9);*/
+BeautifulWorld.ppt.change = function(ele,k){
+    var pptLength = ele.length,
+        i;
+    for (i = 0;i < pptLength;i = i +1) {
+        ele[i].style.display = "none";
+    }
+        ele[k].style.display = "block";
+        ele[k].filterOpacity = 0;
+        BeautifulWorld.opacityCompatibility.filterAdd(ele[k],100);
+};
+BeautifulWorld.ppt.button = function(ele,k){
+    var buttonLength = ele.length,
+        i;
+    for (i = 0;i < buttonLength;i = i +1) {
+        ele[i].style.backgroundColor = "#1c1919"
+    }
+        ele[k].style.backgroundColor = "#ffd74e"
+}
+/* addEvent */
+
+BeautifulWorld.eventAdd = (function(){
+    var eleLi = $(".nav_mouse"),
+        eleSpan = $("#nav_move"),
+        nav = $("#nav"),
+        navLength = eleLi.length,
+        i,
+        addOrNot,
+        protectThis = function(that){
+            return function(){
+                addOrNot = that.thisPosition - BeautifulWorld.nav.leftPosition;
+                if( addOrNot > 0){
+                    eleSpan.css("width",that.thisWidth + "px");
+                    BeautifulWorld.nav.moveAdd("left",that.thisPosition,BeautifulWorld.nav.leftPosition);
+                }else if(addOrNot < 0){
+                    eleSpan.css("width",that.thisWidth + "px");
+                    BeautifulWorld.nav.moveSub("left",that.thisPosition,BeautifulWorld.nav.leftPosition);
+                }else{
+                    return;
+                }
+            }
+        },
+        outThis = function(that){
+            return function(e){
+                addOrNot =  BeautifulWorld.nav.defaultPosition - BeautifulWorld.nav.leftPosition;
+                var reltg = e.relatedTarget ? e.relatedTarget : e.toElement;
+                while (reltg && reltg != that){
+                    reltg = reltg.parentNode;
+                }
+                if(reltg != that){
+                    eleSpan.css("width",BeautifulWorld.nav.defaultWidth + "px");
+                    if(addOrNot > 0){
+                        BeautifulWorld.nav.moveAdd("left",BeautifulWorld.nav.defaultPosition,BeautifulWorld.nav.leftPosition);
+                    }else if(addOrNot < 0){
+                        BeautifulWorld.nav.moveSub("left",BeautifulWorld.nav.defaultPosition,BeautifulWorld.nav.leftPosition);
+                    }else{
+                        return;
+                    }
+                };
+            }
+        }
+    BeautifulWorld.nav.leftPosition = parseInt(eleSpan.css("left"));
+    BeautifulWorld.nav.defaultPosition = BeautifulWorld.nav.leftPosition;
+    eleLi[0].thisPosition = -7;
+    eleLi[0].thisWidth = 47;
+    for(i = 0 ; i < navLength ; i = i + 1){
+        if( i !== 0){
+            eleLi[i].thisPosition = 67 + 102*(i -1);
+            eleLi[i].thisWidth = 70;
+        }
+        eleLi[i].event("mouseover",protectThis(eleLi[i]),false);
+    }
+    nav.event("mouseout",outThis(nav),false);
+
+    /* scroll */
+    var scrollHeight = BeautifulWorld.scroll.cancluateTop,
+        scrollTo = function(that,i){
+            return function(e){
+                BeautifulWorld.nav.defaultPosition = eleLi[i].thisPosition;
+                BeautifulWorld.nav.defaultWidth = eleLi[i].thisWidth;
+                eleSpan.css("width",BeautifulWorld.nav.defaultWidth + "px");
+                eleSpan.css("left",BeautifulWorld.nav.defaultPosition + "px");
+                if (that.toScrollHeight > BeautifulWorld.scroll.defaultTo) {
+                    BeautifulWorld.scroll.goMoveToAdd(that.toScrollHeight,BeautifulWorld.scroll.defaultTo,e);
+                }else{
+                    BeautifulWorld.scroll.goMoveToSub(that.toScrollHeight,BeautifulWorld.scroll.defaultTo,e);
+                }
+            }
+        };
+
+    for(i = 0; i < navLength - 1; i = i +1){
+        eleLi[i].toScrollHeight = scrollHeight[i];
+        eleLi[i].event("click",scrollTo(eleLi[i],i),false);
+    };
+
+    /* opacity */
+    function Opacity(eventEle,changeEle,target){
+        var opacityEvent = $(eventEle),
+            opacityChange = $(changeEle),
+            opacityLength = opacityEvent.length,
+            i,
+            opacityProtect = function(i,that){
+                return function(e){
+                    var relatedTag = e.relatedTarget;
+                    while(relatedTag && relatedTag != that){
+                        relatedTag = relatedTag.parentNode;
+                    }
+                    clearTimeout(opacityChange[i].stopTime);
+                    if (e.type === "mouseover"){
+                        BeautifulWorld.opacityCompatibility.filterAdd(opacityChange[i],target);
+                    }
+                    if (e.type === "mouseout"){
+                        BeautifulWorld.opacityCompatibility.filterSub(opacityChange[i],0);
+                    }
+                }
+            }
+
+        for (i = 0; i < opacityLength; i = i +1) {
+            opacityChange[i].filterOpacity = 0;
+            opacityEvent[i].event("mouseover",opacityProtect(i,opacityEvent[i]),false);
+            opacityEvent[i].event("mouseout",opacityProtect(i,opacityEvent[i]),false);
+        }
+    }
+    if (!BeautifulWorld.opacityCompatibility.isOpacitySupport) {
+        Opacity(".branchInter",".inter",100);
+        Opacity(".photoPerson",".photoHover",100);
+        Opacity(".web",".webHidden",50);
+        Opacity(".web",".webBottom",100);
+    }
+    if (BeautifulWorld.opacityCompatibility.isOpacitySupport && !(BeautifulWorld.opacityCompatibility.isTransition)) {
+        Opacity(".branchInter",".inter",1);
+        Opacity(".photoPerson",".photoHover",1);
+        Opacity(".web",".webHidden",0.5);
+        Opacity(".web",".webBottom",1);
+    };
+
+    /* PPT change */
+    var pptClick = $("#displayWeb").getElementsByTagName("span"),
+        pptLength = pptClick.length,
+        pptChangeModel = BeautifulWorld.ppt.fuckIe;
+    for(i = 0;i < pptLength;i = i + 1){
+        pptClick[i].event("click",(function(i,that,otherThat){
+            return function(){
+                BeautifulWorld.ppt.button(that,i);
+                BeautifulWorld.ppt.change(otherThat,i);
+            }
+        })(i,pptClick,pptChangeModel),false)
+    }
+
+    /* photoChange */
+    var photoDiv = $(".personPicture"),
+        photoLength = photoDiv.length,
+        photoOut = $("#webShowPhoto"),
+        photoGroup = 10,
+        kMoveX = 0,
+        zMoveY = 0,
+        photoDepend = BeautifulWorld.photograph.changeBg;
+
+    for(i = 0;i < photoLength;i = i + 1){
+        photoDiv[i].moveX = kMoveX;
+        photoDiv[i].moveY = zMoveY++;
+        if ( zMoveY % photoGroup === 0 && i !== 0){
+            kMoveX++;
+            zMoveY = 0;
+        }
+        photoDiv[i].event("mouseover",photoDepend(photoDiv[i],photoDiv),false);
+        photoDiv[i].event("click",(function (that) {
+            return function () {
+                that.style.backgroundPosition = "-82px";
+            }
+        })(photoDiv[i]),false);
+    }
+
+    photoOut.event("mouseout",function(e){
+        var rel = e.relatedTarget || e.toElement;
+        console.log(rel);
+        if(rel.contains(this)){
+            for(i = 0;i < photoLength;i = i + 1){
+                photoDiv[i].style.backgroundPosition = "0";
+            }
+        }
+    },false)
+    /* ajax */
+   /*var ajaxButton = $("#sendUs"),
+       nameValue = $("#userName").value,
+       phoneNumber = $("#phoneNumber").value,
+       emailValue = $("#email").value,
+       userValue = $("#userInput").value;
+
+
+   ajaxButton.event("click",function () {
+       if (getVerify("#phoneNumber",BeautifulWorld.form.verify.phoneNumber) &&
+           getVerify("#email",BeautifulWorld.form.verify.email) ) {
+           console.log($("#userInput").value);
+           BeautifulWorld.ajax()({
+               url: "text.txt",
+               method: "POST",
+               send:
+                   "name=" + nameValue +
+                       "&phoneNumber=" + phoneNumber +
+                       "&emailValue=" + emailValue +
+                       "&userValue=" + userValue,
+               success: function () {
+
+               }
+           });
+       }
+   },false)*/
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
