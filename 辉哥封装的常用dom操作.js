@@ -24,6 +24,7 @@
                     }
                     if(ele){
                         return function(methodName,method){
+                        
                             HTMLElement.prototype[methodName] = method;
                         }
                     }else{
