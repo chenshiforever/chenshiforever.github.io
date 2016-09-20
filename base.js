@@ -543,25 +543,7 @@ function getScroll(){
 }
 
 
-// 简单的节流函数
-function throttle(func, wait, mustRun) {   //这种return函数的方式不会污染全局变量									
-    var timeout,						   //但是这样this传不进来了
-        startTime = new Date();
-    return function() {   
-        var context = this,
-            args = arguments,
-            curTime = new Date();
-        clearTimeout(timeout);
-        // 如果达到了规定的触发时间间隔，触发 handler
-        if(curTime - startTime >= mustRun){
-            func.apply(context,args);
-            startTime = curTime;
-        // 没达到触发间隔，重新设定定时器
-        }else{
-            timeout = setTimeout(func, wait);
-        }
-    };
-};
+
 //快排
 function qukic(arr){
 	if(arr.length <=1)return arr;
@@ -789,8 +771,10 @@ Base.prototype.animate = function(obj){
 // 	async:false,
 // 	sucess:function(data){
 // 		//doSomething
+// 		console.log(111);
 // 	}
 // })
+
 //参数
 //method get/post
 //url 服务器地址
@@ -852,7 +836,25 @@ function ajax(obj){
 
 
 
-
+// 简单的节流函数
+function throttle(func, wait, mustRun) {   //这种return函数的方式不会污染全局变量									
+    var timeout,						   //但是这样this传不进来了
+        startTime = new Date();
+    return function() {   
+        var context = this,
+            args = arguments,
+            curTime = new Date();
+        clearTimeout(timeout);
+        // 如果达到了规定的触发时间间隔，触发 handler
+        if(curTime - startTime >= mustRun){
+            func.apply(context,args);
+            startTime = curTime;
+        // 没达到触发间隔，重新设定定时器
+        }else{
+            timeout = setTimeout(func, wait);
+        }
+    };
+};
 
 function runer(x){   //settimeout模拟setInterval
 	var timer = setTimeout(function(){

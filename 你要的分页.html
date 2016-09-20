@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>js分页效果</title>
+<style>
+a{ padding:3px;margin:5px;border: 1px solid #ccc;text-decoration: none;border-radius: 2px;color: #bfbfbf;line-height: 25px;}
+</style>
+<script>
+window.onload = function(){
+	
+	page({
+		id : 'div1',
+		nowNum : 12,
+		allNum : 35,
+		callBack : function(now,all){
+			console.log('当前页:' + now +',总共页:'+all);
+		}
+	
+	});
+	
+};
+
+function page(opt){
+	if(!opt.id){return false};
+	var obj = document.getElementById(opt.id);
+	var nowNum = opt.nowNum || 1;
+	var allNum = opt.allNum || 5;
+	var callBack = opt.callBack || function(){};
+	if(nowNum>=2){    //创建一个上一页
+		var oA = document.createElement('a');
+		oA.href = '#' + (nowNum - 1);  //上一页链接的相对地址
+		oA.innerHTML = '上一页';
+		console.log(obj);
+		obj.appendChild(oA);
+	}
+	if( nowNum>=4 && allNum>=6 ){	//创建一个  首页
+		var oA = document.createElement('a'),
+			oSpan = document.createElement('span');
+		oA.href = '#1';  //首页链接到第一页
+		oA.innerHTML = '[1]';
+		oSpan.innerHTML="...";
+		obj.appendChild(oA);
+		if(nowNum >=5){
+			obj.appendChild(oSpan);
+		}
+	}
+	if(allNum<=5){  //如果总页数少于5，就直接创建1,2,3,4,5页
+		for(var i=1;i<=allNum;i++){
+			var oA = document.createElement('a');
+			oA.href = '#' + i;	//创建一个相对的地址
+			if(nowNum == i){
+				oA.innerHTML = i;
+				//console.log(oA);
+			}
+			else{
+				oA.innerHTML = '['+ i +']';
+			}
+			obj.appendChild(oA);
+		}	
+	}else{
+		for(var i=1;i<=5;i++){
+			var oA = document.createElement('a');
+			if(nowNum == 1 || nowNum == 2){
+				oA.href = '#' + i;
+				if(nowNum == i){
+					oA.innerHTML = i;
+				}
+				else{
+					oA.innerHTML = '['+ i +']';
+				}
+			}
+			else if( (allNum - nowNum) == 0 || (allNum - nowNum) == 1 ){
+				oA.href = '#' + (allNum - 5 + i);
+				if((allNum - nowNum) == 0 && i==5){
+					oA.innerHTML = (allNum - 5 + i);
+				}
+				else if((allNum - nowNum) == 1 && i==4){
+					oA.innerHTML = (allNum - 5 + i);
+				}
+				else{
+					oA.innerHTML = '['+ (allNum - 5 + i) +']';
+				}
+			}
+			else{
+				oA.href = '#' + (nowNum - 3 + i);
+				if(i==3){
+					oA.innerHTML = (nowNum - 3 + i);
+				}
+				else{
+					oA.innerHTML = '['+ (nowNum - 3 + i) +']';
+				}
+			}
+			obj.appendChild(oA);
+		}
+	}
+	if( (allNum - nowNum) >= 3 && allNum>=6 ){
+		var oA = document.createElement('a'),
+			oSpan = document.createElement('span');
+		oA.href = '#' + allNum;
+		oA.innerHTML = '['+allNum+']';
+		oSpan.innerHTML="...";
+		if(nowNum < allNum-3){
+			obj.appendChild(oSpan);
+		}
+		obj.appendChild(oA);
+	}
+	if( (allNum - nowNum) >= 1 ){
+		var oA = document.createElement('a');
+		oA.href = '#' + (nowNum + 1);
+		oA.innerHTML = '下一页';
+		obj.appendChild(oA);
+	}
+	callBack(nowNum,allNum);
+	var aA = obj.getElementsByTagName('a');
+	for(var i=0;i<aA.length;i++){
+		aA[i].onclick = function(){  //这里是点击，所以用递归不会死循环
+			var nowNum = parseInt(this.getAttribute('href').substring(1));
+			obj.innerHTML = ''; //清空
+			page({
+				id : opt.id,
+				nowNum : nowNum,
+				allNum : allNum,
+				callBack : callBack
+			});
+			return false;
+		};
+	}
+}
+</script>
+</head>
+
+<body>
+<div id="div1">
+	<!--<a href="#1">首页</a>
+	<a href="#3">上一页</a>
+	<a href="#2">[2]</a>
+	<a href="#3">[3]</a>
+	<a href="#4">4</a>
+	<a href="#5">[5]</a>
+	<a href="#6">[6]</a>
+	<a href="#5">下一页</a>
+	<a href="#10">尾页</a>-->
+	
+
+</div>
+</body>
+</html>
