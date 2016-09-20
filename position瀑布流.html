@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>瀑布流</title>
+    <style type="text/css">
+    * {
+    margin: 0;
+    padding: 0;
+}
+ 
+#container {
+    position: relative;
+}
+ 
+.box {
+    padding:5px;
+    float: left;
+}
+ 
+.border_img {
+    border: 1px solid #ccc;
+    border-radius:5px;
+    box-shadow:0 0 5px #ccc;
+    padding: 5px;
+}
+ 
+.border_img img {
+    width: 190px;
+    height:auto;
+}
+
+    
+    </style>
+<script type="text/javascript">
+    waterfall({
+        id:"container",
+        url:"getPics.php",
+        async:true,
+        method:"get"
+    });
+
+
+    function ajax(obj){
+        var xhr = (function(){
+            if(typeof XMLHttpRequest != "undefined"){
+                return new XMLHttpRequest();
+            } else if(typeof ActiveXObject != "undefined"){
+                var version = ['MSXML2.XMLHttp.6.0','MSXML2.XMLHttp.3.0','MSXML2.XMLHttp'];
+                for(var i = 0; i < version.length; i++){
+                    try{
+                        return new ActiveXObject(version[i]);
+                    } catch(e){
+                        
+                    }
+                }
+            } else {
+                throw("您的浏览器不支持XHR对象！");
+            }
+        })()
+        
+        obj.url = obj.url +"?rand="+ Math.random();
+        console.log( obj.data);
+        obj.data = (function(data){   //传入数据json格式
+        var arr = [];
+        for(var i in data){
+            arr.push(encodeURIComponent(i)+ "=" +encodeURIComponent(data[i]));
+        }
+        return arr.join("&");
+    })(obj.data)
+        if(obj.method === "get") obj.url += obj.url.indexOf("?") == -1 ? "?"+ obj.data : "&" + obj.data;
+        if(obj.async === true){
+            xhr.onreadystatechange =function(){
+                if(xhr.readyState == 4){
+                    callback();
+                }
+            }
+        }
+        xhr.open(obj.method,obj.url,obj.async);
+        if(obj.method === "post"){
+            xhr.setRequestHeader("Content-Type","application/x-www-form-urlencode");
+            xhr.send(obj.data);
+        }else{
+            xhr.send(null);
+        }
+        if(obj.async === false){
+            callback();
+        }
+        function callback(){
+            if(xhr.status == 200){
+                obj.success(xhr.responseText);
+            }else{
+                console.log('获取数据错误！错误代号：' + xhr.status + '，错误信息：' + xhr.statusText);
+            }
+        }
+
+    }
+
+
+    function waterfall(obj){  
+        var page = 1;
+        var flag = true;
+        getList();
+        function getList(){
+            ajax({
+                method :obj.method,
+                url:obj.url,
+                data:{
+                   cpage:page, 
+                },
+                async:obj.async,
+                success:function(data){
+                     var imgData = JSON.parse(data);
+                    if(!imgData.length){
+                        return;
+                    }
+                 var containerDiv = document.getElementById(obj.id);//获取容器的div
+                for (var i = 0; i < imgData.length; i++) {//创建div节点
+                    var boxDiv = document.createElement("div");//动态创建div标签
+
+                    boxDiv.style.height = imgData[i].height/imgData[i].width*200 +"px";//动态生成相应的高度
+                    boxDiv.className = "box";//动态设置div的class="box"
+                    containerDiv.appendChild(boxDiv);//动态添加containerDiv子节点
+                    var borderImgDiv = document.createElement("div");//动态创建div标签
+                    borderImgDiv.className = "border_img";//动态设置div的class="border_img"
+                    boxDiv.appendChild(borderImgDiv);//动态添加boxDiv子节点
+                    var boxImg = document.createElement("img");//动态创建img标签
+                    boxImg.src =imgData[i].preview;
+                    console.log(boxImg.height);
+                    borderImgDiv.appendChild(boxImg);//动态添加boxDiv子节点
+                }
+                onloadImages("container", "box");  
+                    flag = true;
+                }  
+            })
+        
+        }   
+    window.onscroll = function () {//这里判断一次只发一个请求
+        if (dongtaitianjia("container", "box")) {
+          if(flag){
+                    flag = false;
+                    page++;
+                    getList();
+                }
+        }
+    }
+    //判断是否要加载内容
+    function dongtaitianjia(parent, box) {
+        var containerChilder = document.getElementById(parent);//获取container
+        var boxList = containerChilder.getElementsByClassName(box);//获取所有的.box集合
+        var lastBoxOffsetTop = boxList[boxList.length - 1].offsetTop;//最后一个.box集合元素的offsetTop
+        var pingmuHeight = document.documentElement.clientHeight || document.body.clientHeight;//内容区的高度
+        var scrollHeight = document.documentElement.scrollTop || document.body.scrollTop;//滚动的高度
+        if (lastBoxOffsetTop < pingmuHeight + scrollHeight) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    function onloadImages(parent, box) {
+        var containerChilder = document.getElementById(parent);//获取container
+        var boxList = containerChilder.getElementsByClassName(box);//获取所有的.box集合
+        var num = Math.floor(document.documentElement.clientWidth / boxList[0].offsetWidth);//得到一行能放几张图片
+        containerChilder.style.cssText = "width:" + num * boxList[0].offsetWidth + "px;margin:0 auto;"//设置宽度，居中
+        var boxHeightArray = [];//第一行.box集合高度的集合
+        for (var i = 0; i < boxList.length; i++) {
+            if (i < num) {
+                boxHeightArray.push(boxList[i].offsetHeight);//第一行.box的高度集合
+            }
+            else {
+                var minArrayHeight = Math.min.apply(null, boxHeightArray);//获取集合中的最小值，也就是高度最小的那个
+                var minHeightIndex = getMinHeightArray(boxHeightArray, minArrayHeight);//获取高度最小的那个.box集合位置
+                boxList[i].style.position = "absolute";//设置绝对定位
+                boxList[i].style.left = boxList[minHeightIndex].offsetLeft + "px";
+                boxList[i].style.top = minArrayHeight + "px";
+                //console.log(boxList[i].offsetHeight);
+                boxHeightArray[minHeightIndex] = boxHeightArray[minHeightIndex] + boxList[i].offsetHeight;//把集合中最矮的加上放在下面的元素的高度，避免所有的元素都挤在一起
+            }
+        }
+    }
+    //获取高度最小的那个.box集合位置
+    function getMinHeightArray(array, minHeight) {
+        for (var i = 0; i < array.length; i++) {
+            if (array[i] == minHeight) {
+                return i;
+            }
+        }
+    }
+    
+}
+
+
+
+</script>
+</head>
+<body>
+    <div id="container">
+    </div>
+</body>
+</html>
+
+
+
