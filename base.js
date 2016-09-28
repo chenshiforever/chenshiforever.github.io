@@ -11,7 +11,7 @@ function Base(args) {
             var elements = args.split(' '),
             	childElements = [],
             	node = [],
-            	i=0;
+            	i = 0;
             
             for (; i < elements.length; i++) {
                 if (node.length == 0) node.push(document);
@@ -70,9 +70,9 @@ Base.prototype.ready = function(fn){
 	addDomLoad(fn);
 }
 //find
-Base.prototype.find=function(str){
+Base.prototype.find = function(str){
 	var childElements = [];
-	for(var i = 0 ; i <this.elements.length; i++ ){
+	for(var i = 0 ; i < this.elements.length; i ++ ){
 		switch(str.charAt(0)){
 			case '#':childElements.push(this.getId(str.substring(1)));
 			break;
@@ -117,13 +117,13 @@ Base.prototype.getClass = function(classname,parentname){
 	return temps;
 }
 //添加class
-Base.prototype.addClass =function(className){ 
+Base.prototype.addClass = function(className){ 
 	for(var i = 0; i < this.elements.length; i ++){
 		if(!hasClass(this.elements[i],className)){
 			if(haveClass(this.elements[i])){
-				this.elements[i].className +=" " + className; 
+				this.elements[i].className += " " + className; 
 			}else{
-				this.elements[i].className +="" + className; 
+				this.elements[i].className += "" + className; 
 			}
 			
 		}
@@ -131,10 +131,10 @@ Base.prototype.addClass =function(className){
 	return this;
 }
 //移除class
-Base.prototype.removeClass =function(className){ 
+Base.prototype.removeClass = function(className){ 
 	for(var i = 0; i < this.elements.length; i ++){
 		if(hasClass(this.elements[i]),className){
-			this.elements[i].className = this.elements[i].className.replace(new RegExp('(\\s|^)' +className+ '(\\s|$)')," ");  
+			this.elements[i].className = this.elements[i].className.replace(new RegExp('(\\s|^)' + className + '(\\s|$)')," ");  
 		}
 	}
 	return this;
@@ -142,7 +142,7 @@ Base.prototype.removeClass =function(className){
 //name
 Base.prototype.getName = function(name){
 	var Names = document.getElementsByName(name);
-	for(var i = 0; i < Names.length; i++){
+	for(var i = 0; i < Names.length; i ++){
 		this.elements.push(Names[i]);
 	}
 	return this;
@@ -209,7 +209,7 @@ Base.prototype.sibiling = function () {
 //css
 Base.prototype.css = function(attr,value){
 	for(var i = 0; i < this.elements.length; i ++){
-		if(arguments.length ==1){ //获取css
+		if(arguments.length == 1){ //获取css
 			return getStyle(this.elements[i],attr);
 		}
 		this.elements[i].style[attr] = value;
@@ -302,21 +302,28 @@ Base.prototype.hide = function(){
 }
 //添加点击事件
 Base.prototype.click = function(fn){
-	for(var i = 0;i < this.elements.length; i ++){
+	for(var i = 0; i < this.elements.length; i ++){
 		addEvent(this.elements[i],'click',fn);
+	}
+	return this;
+}
+//foreach
+Base.prototype.each = function(fn){
+	for(var i = 0; i < this.elements.length; i ++){
+		fn(i,this.elements[i])
 	}
 	return this;
 }
 //on方法，为了多个事件执行
 Base.prototype.on = function(type,fn){
-	for(var i = 0;i < this.elements.length; i ++){
+	for(var i = 0; i < this.elements.length; i ++){
 		addEvent(this.elements[i],type,fn);
 	}
 	return this;
 }
 //offset
 Base.prototype.offset = function(type,fn){
-	var element=this.elements[0];
+	var element = this.elements[0];
 	return {
 		top:element.offsetTop,
 		left:element.offsetLeft,
@@ -382,7 +389,7 @@ function addDomLoad(fn){
 		},1);
 	}
 	if(document.addEventListener){
-		addEvent(document,'DOMContentLoaded',function(){  //这玩意不会等待css的加载
+		addEvent(document,'DOMContentLoaded',function(){  //这玩意不会等待css的加载,dom结构加载完毕！
 			
 			
 			fn();
@@ -559,7 +566,7 @@ function qukic(arr){
 			rightArr.push(arr[i]);
 		}
 	}
-	return qukic(leftArr).concat([baseNum],qukic(rightArr));	
+	return qukic(leftArr).concat(baseNum,qukic(rightArr));	
 }
 //功能,应该做成插件
 //拖跩
@@ -640,13 +647,22 @@ Base.prototype.animate = function(obj){
 
 	for(var i = 0; i < this.elements.length; i ++){
 		var element = this.elements[i],
-			attr = obj["attr"] =="x" ? "left" : obj["attr"] == "y" ? "top" : obj["attr"] == "w" ? "width" : obj["attr"] == "h" ? "height" : obj["attr"] == "o" ? "opacity" : obj["attr"] == "z"? "z-index":obj["attr"] == undefined ? obj["attr"]:"left",
-			start = obj["start"] != undefined ? obj["start"]: attr == "opacity" ? getStyle(element,attr) * 100 :getStyle(element,attr),
+			attr = obj["attr"] == "x" ? "left" : 
+				   obj["attr"] == "y" ? "top" : 
+				   obj["attr"] == "w" ? "width" : 
+				   obj["attr"] == "h" ? "height" : 
+				   obj["attr"] == "o" ? "opacity" : 
+				   obj["attr"] == "z" ? "z-index":
+				   obj["attr"] == undefined ? obj["attr"]:"left",
+			start = obj["start"] != undefined ? obj["start"]: 
+					attr == "opacity" ? getStyle(element,attr) * 100 :
+					getStyle(element,attr),
 			time = obj["time"] != undefined ? obj["time"] : 1000/60,
 			step = obj["step"] != undefined ? obj["step"] : 1,
 			alter = obj["alter"] , //增量
 			target = obj["target"] , //目标
-			type = obj["type"] == "constant" ? "constant" : obj["type"] =="flex" ? "flex" :"buffer",
+			type = obj["type"] == "constant" ? "constant" : 
+				   obj["type"] == "flex" ? "flex" : "buffer",
 			speed = obj["speed"] != undefined ? obj["speed"] : 6,
 			mul = obj["mul"];
 		if(alter != undefined && target == undefined){
@@ -674,14 +690,20 @@ Base.prototype.animate = function(obj){
 		 element.timer = setInterval(function(){
 			var flag=true;
 			for(var i in mul){
-				attr = i == "x"?"left":i == "y"?"top":i == "w"?"width":i=="h"?"height":i == "o" ? "opacity": i == "z" ? "z-index" : i != undefined ? i : "left";
-				start = attr == "opacity" ? getStyle(element,attr) * 100 :getStyle(element,attr),
+				attr = i == "x"?"left":
+					   i == "y"?"top":
+					   i == "w"?"width":
+					   i=="h"?"height":
+					   i == "o" ? "opacity": 
+					   i == "z" ? "z-index" : 
+					   i != undefined ? i : "left";
+				start = attr == "opacity" ? getStyle(element,attr) * 100 : getStyle(element,attr),
 				target = attr == "opacity" ? mul[i] * 100 :mul[i];
 				if(type == "buffer"){
-					step = attr == "opacity" ? (target - getStyle(element,attr) *100)/speed :(target - getStyle(element,attr))/speed;
+					step = attr == "opacity" ? (target - getStyle(element,attr) *100)/speed : (target - getStyle(element,attr))/speed;
 					step = step > 0 ?Math.ceil(step) : Math.floor(step);
 				} else if(type == "flex"){
-					step += attr == "opacity" ? (target - getStyle(element,attr) *100)/speed :(target - getStyle(element,attr))/speed;
+					step += attr == "opacity" ? (target - getStyle(element,attr) *100)/speed : (target - getStyle(element,attr))/speed;
 					step*=0.75;
 					
 				}
@@ -694,7 +716,7 @@ Base.prototype.animate = function(obj){
 						setOpacity();
 					} else {
 						//这里是执行的核心动画
-						var temp =Math.round(getStyle(element,attr)*100);
+						var temp = Math.round(getStyle(element,attr)*100);
 						element.style.opacity = parseInt(temp + step)/100;
 						element.style.filter = "alpha=(opacity="+parseInt(temp+step) +")";
 					}
@@ -737,12 +759,12 @@ Base.prototype.animate = function(obj){
 						}
 					}
 					//console.log(getStyle(element,attr),target);
-					if(parseInt(target)!=parseInt(getStyle(element,attr))) flag =false;
+					if(parseInt(target)!= parseInt(getStyle(element,attr))) flag = false;
 				}
 			}
 			if(flag){			
 				clearInterval(element.timer);
-				if(obj.fn !=undefined)obj.fn();
+				if(obj.fn != undefined)obj.fn();
 			}
 		},time);
 		function setTarget() {   //z-index,other
@@ -808,13 +830,6 @@ function ajax(obj){
 		return arr.join("&");
 	})(obj.data)
 	if(obj.method === "get") obj.url += obj.url.indexOf("?") == -1 ? "?"+ obj.data : "&" + obj.data;
-	if(obj.async === true){
-		xhr.onreadystatechange =function(){
-			if(xhr.readyState == 4){
-				callback();
-			}
-		}
-	}
 	xhr.open(obj.method,obj.url,obj.async);
 	if(obj.method === "post"){
 		xhr.setRequestHeader("Content-Type","application/x-www-form-urlencode");
@@ -824,6 +839,13 @@ function ajax(obj){
 	}
 	if(obj.async === false){
 		callback();
+	}
+	if(obj.async === true){
+		xhr.onreadystatechange =function(){
+			if(xhr.readyState == 4){
+				callback();
+			}
+		}
 	}
 	function callback(){
 		if(xhr.status == 200){
@@ -871,3 +893,16 @@ function runer(x){   //settimeout模拟setInterval
 Base.prototype.extend = function (name, fn) {
 	Base.prototype[name] = fn;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+

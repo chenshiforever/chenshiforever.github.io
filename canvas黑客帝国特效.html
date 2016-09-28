@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Martrix</title>
+    <style>
+        body{
+            padding: 0;
+            margin: 0;
+            overflow: auto;
+        }
+    
+    </style>
+</head>
+<body>
+   <canvas id="canvas" style="background:#000;"></canvas>
+   <script type="text/javascript">
+        window.onload = function (){
+            var canvas = document.getElementById('canvas'),
+                context = canvas.getContext("2d"),
+                w = canvas.width = window.innerWidth,
+                h = canvas.height = window.innerHeight;
+            //init
+            var clearColor = "rgba(0,0,0,0.06)",//这里很有用，用于渐变
+                wordColor = "#3f3",
+                words = "0123456789qwertyuiopasdfghjklzxcvbnm,./;'@#$^&*()_-+=\[]QWERTYUIOP{}ASDFGHJHJKL:ZXCVBBNM<>?",
+                wordsArr = words.split(""),
+                fontSize = 16,
+                colnum = w/fontSize,
+                drops = [],
+                timer = null,
+                i = 0;
+            for(; i < colnum; i ++){
+                drops[i] = 1;
+            }
+            
+            function draw(drops){
+                
+                var i = 0,
+                    text;
+                context.save();
+                context.fillStyle = "rgb("+Math.floor(256*Math.random())+","+Math.floor(256*Math.random())+","+Math.floor(256*Math.random())+")";
+                context.font = fontSize + "px arial";
+                //
+                for(; i < drops.length; i ++){
+                    text = wordsArr[Math.floor(wordsArr.length *Math.random())];
+                    context.fillText(text,i * fontSize,drops[i]*fontSize);
+                    if(drops[i] *fontSize > h && Math.random() > 0.95){
+                        drops[i] = 0;
+                    }
+                    drops[i] ++;
+                
+                }
+                context.restore();
+                
+            }
+            function resize(){
+                var w = canvas.width = window.innerWidth,
+                    h = canvas.height = window.innerHeight,
+                    drops = [],
+                    colnum = w/fontSize,
+                    i = 0;
+                for(; i < colnum; i ++){
+                   drops[i] = Math.random() > 0.5 ? 1 : 0;
+                }        
+                drawFrame(drops); 
+            }
+            window.addEventListener("resize", resize);
+            drawFrame(drops); 
+            function drawFrame(drops){
+                cancelAnimationFrame(timer);
+                timer = window.requestAnimationFrame(function(){
+                    drawFrame(drops)
+                });
+                
+                context.fillStyle = clearColor;
+                context.fillRect(0,0,canvas.width,canvas.height);
+                draw(drops);
+            }
+        }
+        
+ 
+
+   </script>
+</body>
+</html>
