@@ -321,6 +321,18 @@ Base.prototype.on = function(type,fn){
 	}
 	return this;
 }
+//toggle
+Base.prototype.toggle = function(){//参数全是函数
+	for(var i = 0; i < this.elements.length; i ++){
+		var count = 0,
+			args = arguments;
+		addEvent(this.elements[i],"click",function(){
+			args[count ++ % args.length]();
+		});
+		
+	}
+	return this;
+}
 //offset
 Base.prototype.offset = function(type,fn){
 	var element = this.elements[0];
@@ -487,7 +499,7 @@ function getClientInner(){
 	}	
 } 
 //兼容获取style
-function getStyle(element,attr){//这里返回的是不带单位的,已经parseFloat
+function getStyle(element,attr){//这里返回的是不带单位的,已经parseFloat,返回的是小数
 	if(typeof window.getComputedStyle != "undefined"){
 		//console.log(getComputedStyle(element,false)[attr]);
 		return parseFloat(window.getComputedStyle(element,null).getPropertyValue(attr));
