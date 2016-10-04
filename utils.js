@@ -24,7 +24,7 @@ if(!window.cancelAnimationFrame){
 //鼠标旋转角度
 //mx，my：鼠标位置
 //ox，oy：对象位置
-function RotationToMouse = function(mx,my,ox,oy){
+function RotationToMouse(mx,my,ox,oy){
 	var dx = mx - ox,
 		dy = my - oy,
 		angle = Math.atan2(dy,dx);

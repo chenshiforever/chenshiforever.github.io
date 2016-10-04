@@ -12,14 +12,17 @@ function Base(args) {
             	childElements = [],
             	node = [],
             	i = 0;
-            
             for (; i < elements.length; i++) {
                 if (node.length == 0) node.push(document);
+               
                 switch (elements[i].charAt(0)) {
                 case '#':
+                	console.log(elements[i]);
                     childElements = [];
                     childElements.push(this.getId(elements[i].substring(1)));
+                    console.log(elements[i].substring(1));
                     node = childElements;
+                    
                     break;
                 case '.':
                     childElements = [];
@@ -58,6 +61,7 @@ function Base(args) {
                 this.elements = this.getTagName(args);
             }
         }
+        
     } else if (typeof args == "object") {
         if (args != undefined) {
             this.elements[0] = args;
@@ -102,7 +106,8 @@ Base.prototype.getId = function(id){
 Base.prototype.getClass = function(classname,parentname){
 	
 	var node = null, //得到父元素对象
-		temps = [];
+		temps = [],
+		nodeclass;
 	if(parentname != undefined){
 		node = parentname;
 	}else{
@@ -110,9 +115,12 @@ Base.prototype.getClass = function(classname,parentname){
 	}
 	var all = node.getElementsByTagName('*');
 	for (var i = 0; i < all.length; i ++ ){
-		if(all[i].className == classname){
-			temps.push(all[i]);
-		}
+		nodeclass = all[i].className.split(" ");  //多个class出现bug，修改
+		nodeclass.forEach(function(name){
+			if(name == classname){
+				temps.push(all[i]);
+			} 
+		})
 	}
 	return temps;
 }
@@ -205,6 +213,19 @@ Base.prototype.sibiling = function () {
 	this.elements=elements;
 	return this;
 };
+//next
+Base.prototype.next = function () {
+	for (var i = 0; i < this.elements.length; i ++) {
+		this.elements[i] = this.elements[i].nextSibling;
+		if (this.elements[i] == null) {
+			throw new Error('找不到下一个同级元素节点！');
+		}
+		if (this.elements[i].nodeType == 3) {
+			this.next();
+		}
+	}
+	return this;
+}
 
 //css
 Base.prototype.css = function(attr,value){
@@ -477,7 +498,7 @@ function removeEvent(obj,type,fn){
 	if(typeof obj.removeEventListener != "undefined"){
 		obj.removeEventListener(type,fn,false);
 	} else {
-		for(var i in obj[events][type]){
+		for(var i in obj.events[type]){
 			if(obj.events[type][i] == fn){
 				delete obj.events[type][i];
 			}

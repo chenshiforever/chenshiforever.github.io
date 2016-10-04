@@ -1,0 +1,42 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>circle-and-ellipses</title>
+</head>
+<body>
+   <canvas id='canvas' width="500" height="500" style="border:1px solid #000">
+       your browser not support canvas!
+   </canvas>
+   <p id = "tag"></p>
+
+   <script src="utils.js"></script>
+   <script src="arrow.js"></script>
+   <script>
+      window.onload = function(){
+        var canvas = document.getElementById('canvas'),
+            tag = document.getElementById('tag'),
+            mouse = utils.captureMouse(canvas),
+            context = canvas.getContext("2d"),
+            center = {
+              x:canvas.width/2,
+              y:canvas.height/2
+            },
+            arrow1 = new Arrow(),
+            arrow2 = new Arrow();
+            arrow1.x = center.x;
+            arrow1.y = center.y;
+            arrow2.x = center.x/2;
+            arrow2.y = center.y/2;
+            (function drawFrame(){
+              window.requestAnimationFrame(drawFrame);
+              context.clearRect(0,0,canvas.width,canvas.height);
+              arrow1.rotation = RotationToMouse(mouse.x,mouse.y,arrow1.x,arrow1.y)
+              arrow1.draw(context);
+               arrow2.rotation = RotationToMouse(mouse.x,mouse.y,arrow2.x,arrow2.y)
+              arrow2.draw(context);
+            })()
+      }
+   </script>
+</body>
+</html>
