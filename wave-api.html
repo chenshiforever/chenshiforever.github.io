@@ -1,0 +1,78 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>circle-and-ellipses</title>
+</head>
+<body>
+   <canvas id='canvas' width="500" height="500" style="border:1px solid #000">
+       your browser not support canvas!
+   </canvas>
+   <p>振幅: <input type="range" min="0" max="200" value="50" step="1" id="range"/>
+   <input type="text" value='50' id='ranVau'></p>
+
+   <script src="utils.js"></script>
+   <script src="arrow.js"></script>
+   <script>
+      window.onload = function(){
+        var canvas = document.getElementById('canvas'),
+            tag = document.getElementById('range'),
+            ran = document.getElementById('ranVau'),
+           // mouse = utils.captureMouse(canvas),
+            context = canvas.getContext("2d");
+            context.lineWidth = 2;
+            context.lineStyle = "#000";
+        var xposed = 10,
+            yposed = 180,    
+            angle = 0,
+            range = 50,
+            xspeed = 1,
+            yspeed = 0.5;
+        function line(){
+          var line = new Coordinate({
+            x:10,
+            y:150,
+            width:300,
+            lineWidth:1.1
+          });
+          line.draw(context);
+        }
+         
+        function drawFrame(){
+          window.requestAnimationFrame(drawFrame);
+         // context.clearRect(0,0,canvas.width,canvas.height);
+         context.beginPath();
+         context.moveTo(xposed,yposed);
+         xposed += xspeed;
+         angle += yspeed;
+         yposed = 180 + Math.sin(angle) * range;
+         if(xposed % Math.PI < 0.2){
+           range = 50*Math.random() < 30 ? 30 : 50*Math.random();
+           console.log(xposed);
+         }
+         context.lineTo(xposed,yposed)
+         context.stroke();
+         context.closePath();
+          line();
+        }
+          drawFrame();
+          
+         tag.addEventListener('change',function(event){
+               xposed = 0,
+               yposed = 180;
+               
+               range = this.value;
+               ranVau.value = this.value;
+               
+               context.clearRect(0,0,canvas.width,canvas.height);
+               line();
+               drawFrame();
+           },false);      
+      }
+    
+      
+      
+
+   </script>
+</body>
+</html>
