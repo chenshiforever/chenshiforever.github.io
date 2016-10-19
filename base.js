@@ -226,7 +226,19 @@ Base.prototype.next = function () {
 	}
 	return this;
 }
-
+//prev
+Base.prototype.prev = function () {
+	for (var i = 0; i < this.elements.length; i ++) {
+		this.elements[i] = this.elements[i].previousSibling;
+		if (this.elements[i] == null) {
+			throw new Error('找不到下一个同级元素节点！');
+		}
+		if (this.elements[i].nodeType == 3) {
+			this.prev();
+		}
+	}
+	return this;
+}
 //css
 Base.prototype.css = function(attr,value){
 	for(var i = 0; i < this.elements.length; i ++){
@@ -336,21 +348,52 @@ Base.prototype.each = function(fn){
 	return this;
 }
 //on方法，为了多个事件执行
-Base.prototype.on = function(type,fn){
+Base.prototype.on = function(type,tagname,fn){
 	for(var i = 0; i < this.elements.length; i ++){
-		addEvent(this.elements[i],type,fn);
+		addEvent(this.elements[i],type,function(e){
+			var event = e || window.event,
+				target = event.target || event.srcElement;
+			if(event.target == tagname.toLocaleLowerCase()){
+				fn();
+			}
+		});
+	}
+	return this;
+}
+//bind
+Base.prototype.bind = function(event,fn){
+	for(var i = 0; i < this.elements.length; i ++){
+		addEvent(this.elements[i],event,fn);
 	}
 	return this;
 }
 //toggle
 Base.prototype.toggle = function(){//参数全是函数
 	for(var i = 0; i < this.elements.length; i ++){
-		var count = 0,
-			args = arguments;
-		addEvent(this.elements[i],"click",function(){
-			args[count ++ % args.length]();
-		});
-		
+		(function(elements,arguments){
+			var count = 0,
+				args = arguments;
+			addEvent(this.elements[i],"click",function(){
+					args[count ++ % args.length]();
+			});
+		})(this.elements[i],arguments)
+	}
+	return this;
+}
+//form,获取表单字段//实际上就是选择器的作用，根据name选择，模拟的html的form方式
+Base.prototype.form = function(name){ 
+	for(var i = 0; i < this.elements.length; i ++){
+		this.elements[i] = this.elements[i][name];
+	}
+	return this;
+}
+//formvalue,获取或者设置value
+Base.prototype.formvalue = function(str){
+	for(var i = 0; i < this.elements.length; i ++){
+		if(arguments.length == 0){
+			return this.elements[i].value;
+		}
+		this.elements[i].value = str;
 	}
 	return this;
 }
@@ -854,10 +897,12 @@ function ajax(obj){
 			throw("您的浏览器不支持XHR对象！");
 		}
 	})()
+	{1:{2:3}}
 	obj.url = obj.url +"?rand="+ Math.random();
-	obj.data = (function(data){   //传入数据json格式
+	obj.data = (function get(data){   //传入数据json格式
 		var arr = [];
 		for(var i in data){
+			if(data[i].constructor)
 			arr.push(encodeURIComponent(i)+ "=" +encodeURIComponent(data[i]));
 		}
 		return arr.join("&");
@@ -913,7 +958,7 @@ function throttle(func, wait, mustRun) {   //这种return函数的方式不会�
 
 function runer(x){   //settimeout模拟setInterval
 	var timer = setTimeout(function(){
-		x--;
+		x--;	
 		if(x > 0){
 			runer(x);
 		}
@@ -921,15 +966,23 @@ function runer(x){   //settimeout模拟setInterval
 	},1000)	
 }
 
+var i=4;
+function runner(){
+	if(i == 0){
+			runner = function(){
+				
+			};
+		}
+		i--;
+		console.log(i);
+		setTimeout(runner,1000);
+
+}
 
 //插件入口
 Base.prototype.extend = function (name, fn) {
 	Base.prototype[name] = fn;
 };
-
-
-
-
 
 
 
