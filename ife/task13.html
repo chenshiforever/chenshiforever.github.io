@@ -108,10 +108,8 @@ function removeEvent(obj,type,fn){
 
 function  deepcopy(target,copy){
   var copy = copy || (Object.prototype.toString.call(target) == "[object Array]" ? [] : {});
-  
   for(var i in target){
     if(typeof target[i] === "object"){
-      
       copy[i] = Object.prototype.toString.call(target[i]) == "[object Array]" ? [] : {};
       deepcopy(target[i],copy[i]);
     } else {
@@ -120,10 +118,38 @@ function  deepcopy(target,copy){
   }
   return copy;
 }
-a = [1,2,3,{4:5},[6,7],{8:[9]},{10:{11:12}}];
-var b=[];
-c = deepcopy(a,b);
-console.log(c);
+
+
+
+
+
+//有趣的js
+
+function getnum(){
+  var times = 0;
+  return function(num){
+    for(var i = 1; i <= num / 2; i++){
+      for(var n = 1; n < num/i; n++){
+        if((i + n/2)*(n + 1) === num){
+          times ++;
+          console.log("from" + i +" to"+ (i + n));
+        }
+      }
+      
+    }
+  }
+}
+function getnum(num){
+  var n = 2;
+  for(;num/(n+1)-n/2 >=1; n++){
+    console.log(num/(n+1)-n/2);
+  }
+}
+
+
+
+
+
 </script>
 </body>
 </html>
